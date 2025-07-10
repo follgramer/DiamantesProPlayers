@@ -1,0 +1,53 @@
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+*.iml
+
+# Archivos de configuración de firma (¡CRUCIAL PARA SEGURIDAD!)
+keystore.properties
+
+# Archivos generados automáticamente por Android Studio/Gradle
+.idea/
+!.idea/runConfigurations
+*.iml
+local.properties
+.DS_Store
+build/
+.gradle/
+captures/
+.externalNativeBuild/
+.cxx/
+proguard/
+signingConfigs/
+
+# Archivos y directorios específicos de Android Studio
+app/build/
+app/.cxx/
+app/.gradle/
+app/*.iml
+app/local.properties
+app/proguard-rules.pro
+app/signingConfigs/
+
+# Para archivos de depuración (APK/AAB)
+*.apk
+*.aab
+
+# Directorios de módulos de Gradle
+*/build/
+*/.gradle/
+*/.cxx/
+*/src/androidTest/
+*/src/test/
+
+# Otros archivos a ignorar
+*.zip
+*.tar.gz
+*.log
+!README.md

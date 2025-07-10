@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="Base.Theme.DiamantesProPlayers" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#00A8FF</item>
+        <item name="colorPrimaryVariant">#0084CC</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">#8B5CF6</item>
+        <item name="colorSecondaryVariant">#7C3AED</item>
+        <item name="colorOnSecondary">@android:color/white</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">#0A0F14</item>
+        <item name="colorSurface">#161B22</item>
+        <item name="colorOnSurface">#E6EDF3</item>
+
+        <!-- CONFIGURACIÓN CORRECTA DE BARRAS DEL SISTEMA -->
+        <item name="android:statusBarColor">#161B22</item>
+        <item name="android:navigationBarColor">#0A0F14</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- ❌ REMOVIDA: android:windowLightNavigationBar (causa error en API < 27) -->
+        <item name="android:fitsSystemWindows">true</item>
+
+        <!-- Configuración de ventana -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+
+    <style name="Theme.DiamantesProPlayers" parent="Base.Theme.DiamantesProPlayers" />
+
+    <!-- ✅ TEMA PARA SPLASH SCREEN - COMPATIBLE CON API 23+ -->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- FONDO INMEDIATO - Usar drawable en lugar de color directo -->
+        <item name="android:windowBackground">@drawable/splash_background</item>
+
+        <!-- BARRAS DEL SISTEMA -->
+        <item name="android:statusBarColor">#0A0F14</item>
+        <item name="android:navigationBarColor">#0A0F14</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- ❌ REMOVIDA: android:windowLightNavigationBar (causa error en API < 27) -->
+
+        <!-- ELIMINAR COMPLETAMENTE LA ANIMACIÓN BLANCA -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+
+        <!-- 🔑 CLAVE: Estas líneas eliminan la animación de inicio -->
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+</resources>
