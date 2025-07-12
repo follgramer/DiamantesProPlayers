@@ -16,21 +16,20 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        resValue("string", "BANNER_AD_ID", "ca-app-pub-3940256099942544/6300978111") // Reemplazar con ID real en producción
+        resValue("string", "BANNER_AD_ID", "ca-app-pub-3940256099942544/6300978111")
     }
 
     buildFeatures {
-        buildConfig = true // Habilita la generación de BuildConfig
+        buildConfig = true
         viewBinding = true
     }
 
     signingConfigs {
         create("release") {
-            // Configura manualmente para pruebas; reemplaza con valores reales en producción
-            storeFile = file("path/to/your.keystore") // Reemplazar con la ruta real si existe
-            storePassword = "your_store_password" // Reemplazar con tu contraseña
-            keyAlias = "your_key_alias" // Reemplazar con tu alias
-            keyPassword = "your_key_password" // Reemplazar con tu contraseña
+            storeFile = file("path/to/your.keystore")
+            storePassword = "your_store_password"
+            keyAlias = "your_key_alias"
+            keyPassword = "your_key_password"
         }
     }
 
@@ -42,8 +41,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "REWARDED_AD_TASK_ID", "\"ca-app-pub-3940256099942544/5224354917\"") // Reemplazar con ID real
-            buildConfigField("String", "REWARDED_AD_SPINS_ID", "\"ca-app-pub-3940256099942544/5224354917\"") // Reemplazar con ID real
+            buildConfigField("String", "REWARDED_AD_TASK_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
+            buildConfigField("String", "REWARDED_AD_SPINS_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
         }
         debug {
             buildConfigField("String", "REWARDED_AD_TASK_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
@@ -68,12 +67,18 @@ android {
         }
     }
 
+    // ✅ RESOLUCIÓN DE CONFLICTOS DE DEPENDENCIAS MEJORADA
     configurations.all {
         resolutionStrategy {
-            force("com.google.android.gms:play-services-ads:23.1.0")
-            force("com.google.android.gms:play-services-ads-lite:23.1.0")
+            // Forzar versiones específicas para evitar conflictos
+            force("com.google.android.gms:play-services-ads:22.6.0") // Actualizado a la versión solicitada
+            force("com.google.android.gms:play-services-ads-lite:22.6.0")
             force("com.google.android.gms:play-services-measurement-api:22.0.2")
             force("com.google.android.gms:play-services-measurement:22.0.2")
+            force("com.google.android.gms:play-services-basement:18.3.0")
+
+            // Excluir versiones conflictivas
+            exclude(group = "com.google.android.gms", module = "play-services-safetynet")
         }
     }
 
@@ -92,23 +97,32 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
+    // ✅ DEPENDENCIAS ACTUALIZADAS SEGÚN TU SOLICITUD
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.android.gms:play-services-ads:22.6.0")
+
+    // --- Otras dependencias existentes ---
+    implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-process:2.8.1")
     implementation("androidx.webkit:webkit:1.11.0")
+
+    // Firebase BOM para gestión de versiones
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-functions-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.google.android.gms:play-services-ads:23.1.0") {
-        exclude(group = "com.google.android.gms", module = "play-services-measurement-api")
-    }
+
+    // Agregar explícitamente la versión correcta
     implementation("com.google.android.gms:play-services-measurement-api:22.0.2")
+
+    // User Messaging Platform para consentimiento
     implementation("com.google.android.ump:user-messaging-platform:2.2.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

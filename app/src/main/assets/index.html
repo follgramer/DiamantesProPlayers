@@ -306,38 +306,77 @@
         /* CONTENIDO PRINCIPAL COMPACTO */
         .content {
             flex-grow: 1;
-            padding: 8px 12px; /* Reducido de 15px */
+            padding: 8px 12px;
             display: flex;
             flex-direction: column;
-            gap: 8px; /* Reducido de 15px */
+            gap: 8px;
             align-items: center;
             margin-top: 60px;
-            margin-bottom: 8px; /* Reducido de 15px */
+            margin-bottom: 8px;
         }
 
         .section {
             display: none;
             width: 100%;
             flex-direction: column;
-            gap: 8px; /* Reducido de 15px */
+            gap: 8px;
             align-items: center;
         }
         .section.active { display: flex; }
 
         .container {
             background: var(--secondary-bg);
-            padding: 12px; /* Reducido de 20px */
-            border-radius: 10px; /* Reducido de 12px */
+            padding: 12px;
+            border-radius: 10px;
             text-align: center;
             border: 1px solid #374151;
             width: 100%;
             max-width: 450px;
         }
 
+        /* ESTILOS PARA BANNERS ADMOB - VERSIÓN PROFESIONAL SIN MENSAJES */
+        .admob-banner-container {
+            width: 100%;
+            max-width: 450px;
+            min-height: 50px;
+            display: none; /* ← OCULTO POR DEFECTO */
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0;
+            background: transparent; /* ← SIN FONDO VISIBLE */
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* Solo mostrar cuando el banner se carga exitosamente */
+        .admob-banner-container.loaded {
+            display: flex !important;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        /* Animación suave para cuando aparece el banner */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Asegurarse de que no hay contenido de texto visible mientras carga */
+        .admob-banner-container::before,
+        .admob-banner-container::after {
+            display: none !important;
+            content: none !important;
+        }
+
         /* Estilos específicos para la sección de Política de Privacidad y Términos */
         #privacy-policy, #terms-and-conditions {
             background-color: var(--primary-bg);
-            padding: 20px; /* Mantenido para legibilidad */
+            padding: 20px;
             text-align: left;
             max-width: 800px;
             border: 1px solid #374151;
@@ -378,7 +417,7 @@
         h2 {
             font-weight: 700;
             color: var(--accent-color);
-            margin-bottom: 6px; /* Reducido de 10px */
+            margin-bottom: 6px;
             text-transform: uppercase;
             font-size: var(--text-lg);
             letter-spacing: 0.5px;
@@ -388,20 +427,20 @@
         h2.leaderboard-title { color: var(--green-accent); }
 
         p {
-            margin-bottom: 4px; /* Reducido de 8px */
+            margin-bottom: 4px;
             color: var(--text-muted);
-            line-height: 1.4; /* Reducido de 1.5 */
+            line-height: 1.4;
             font-size: var(--text-sm);
         }
 
         button {
             width: 100%;
-            padding: 10px; /* Reducido de 14px */
+            padding: 10px;
             font-size: var(--text-base);
             font-weight: 700;
             background: var(--accent-color);
             border: none;
-            border-radius: 8px; /* Reducido de 10px */
+            border-radius: 8px;
             color: var(--primary-bg);
             cursor: pointer;
             transition: all 0.2s ease-in-out;
@@ -419,8 +458,8 @@
         }
 
         #myProgress p {
-            margin: 4px 0; /* Reducido de 8px */
-            font-size: var(--text-sm); /* Reducido de text-base */
+            margin: 4px 0;
+            font-size: var(--text-sm);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -431,20 +470,20 @@
             color: var(--accent-color);
             cursor: pointer;
             font-weight: bold;
-            font-size: var(--text-sm); /* Reducido de text-base */
+            font-size: var(--text-sm);
         }
         #myPlayerId:hover { text-decoration: underline; }
 
-        .progress-container { margin-top: 8px; } /* Reducido de 15px */
+        .progress-container { margin-top: 8px; }
         #gameArea { background: var(--container-bg); }
 
         /* DISEÑO PROFESIONAL PARA GIROS - MÁS COMPACTO */
         .spins-section {
             background: linear-gradient(145deg, #1a2332, #0f1419);
             border: 2px solid var(--pass-color);
-            border-radius: 8px; /* Reducido de 12px */
-            padding: 8px; /* Reducido de 15px */
-            margin-bottom: 8px; /* Reducido de 15px */
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 8px;
             position: relative;
             overflow: hidden;
         }
@@ -470,11 +509,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px; /* Reducido de 10px */
+            margin-bottom: 4px;
         }
 
         .spins-title {
-            font-size: var(--text-base); /* Reducido de text-lg */
+            font-size: var(--text-base);
             font-weight: 700;
             color: var(--pass-color);
             margin: 0;
@@ -485,12 +524,12 @@
         .spins-count {
             background: linear-gradient(135deg, var(--pass-color), #ff8533);
             color: white;
-            padding: 4px 12px; /* Reducido de 8px 16px */
-            border-radius: 20px; /* Reducido de 25px */
+            padding: 4px 12px;
+            border-radius: 20px;
             font-weight: 800;
-            font-size: var(--text-base); /* Reducido de text-lg */
-            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3); /* Reducido */
-            min-width: 60px; /* Reducido de 80px */
+            font-size: var(--text-base);
+            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+            min-width: 60px;
             text-align: center;
         }
 
@@ -505,8 +544,8 @@
         .grid-container {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 6px; /* Reducido de 8px */
-            margin: 12px auto; /* Reducido de 20px auto */
+            gap: 6px;
+            margin: 12px auto;
             max-width: 280px;
         }
 
@@ -514,14 +553,14 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             background: #374151;
-            border-radius: 8px; /* Reducido de 10px */
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             font-weight: 800;
             transition: all 0.2s ease-in-out;
-            font-size: var(--text-base); /* Reducido de text-lg */
+            font-size: var(--text-base);
             border: 2px solid transparent;
         }
         .grid-item span {
@@ -529,7 +568,7 @@
             opacity: 0.8;
             font-weight: 500;
             text-transform: uppercase;
-            margin-top: 1px; /* Reducido de 2px */
+            margin-top: 1px;
         }
         .grid-item.active {
             transform: scale(1.1);
@@ -549,24 +588,24 @@
         .winner-card {
             background: var(--container-bg);
             border: 1px solid var(--gold-accent);
-            border-radius: 8px; /* Reducido de 12px */
-            padding: 12px; /* Reducido de 18px */
-            margin-bottom: 8px; /* Reducido de 12px */
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
             text-align: left;
         }
         .winner-card .date {
             font-size: var(--text-xs);
             color: var(--text-muted);
-            margin-bottom: 4px; /* Reducido de 8px */
+            margin-bottom: 4px;
         }
         .winner-card .prize {
-            font-size: var(--text-base); /* Reducido de text-lg */
+            font-size: var(--text-base);
             color: var(--gold-accent);
             font-weight: 800;
-            margin-bottom: 4px; /* Reducido de 6px */
+            margin-bottom: 4px;
         }
         .winner-card .winner-id {
-            font-size: var(--text-sm); /* Reducido de text-base */
+            font-size: var(--text-sm);
             color: var(--text-color);
         }
 
@@ -577,13 +616,13 @@
             font-size: var(--text-sm);
         }
         #leaderboard th, #leaderboard td {
-            padding: 8px 6px; /* Reducido de 12px 8px */
+            padding: 8px 6px;
             border-bottom: 1px solid #374151;
         }
         #leaderboard th {
             color: var(--accent-color);
             font-weight: 600;
-            font-size: var(--text-sm); /* Reducido de text-base */
+            font-size: var(--text-sm);
         }
         #leaderboard-body tr:nth-child(odd) { background-color: #374151; }
         #leaderboard-body .my-rank { background-color: var(--pass-color) !important; font-weight: 800; }
@@ -592,14 +631,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 6px; /* Reducido de 12px 8px */
+            padding: 8px 6px;
             font-size: var(--text-sm);
             border-bottom: 1px solid #2c3e50;
         }
         .mini-leaderboard-item:last-child { border-bottom: none; }
         .my-rank-highlight {
             background-color: rgba(249, 115, 22, 0.2);
-            border-radius: 6px; /* Reducido de 8px */
+            border-radius: 6px;
             font-weight: bold;
         }
 
@@ -607,22 +646,22 @@
         .consent-notice {
             background: linear-gradient(45deg, var(--purple-accent), var(--accent-color));
             color: white;
-            padding: 10px; /* Reducido de 15px */
-            border-radius: 8px; /* Reducido de 10px */
-            margin: 8px 0; /* Reducido de 15px 0 */
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
             font-size: var(--text-sm);
             text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .consent-notice h4 {
-            margin: 0 0 6px 0; /* Reducido de 10px */
-            font-size: var(--text-base); /* Reducido de text-lg */
+            margin: 0 0 6px 0;
+            font-size: var(--text-base);
             font-weight: 700;
         }
 
         .consent-notice p {
-            margin: 3px 0; /* Reducido de 6px */
+            margin: 3px 0;
             color: rgba(255, 255, 255, 0.9);
             font-size: var(--text-sm);
         }
@@ -714,11 +753,11 @@
             -moz-appearance: textfield !important;
         }
 
+        /* === CORRECCIÓN APLICADA AQUÍ === */
         .swal2-input[type=number]::-webkit-outer-spin-button,
         .swal2-input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none !important;
-            margin: 0 !important;
-            display: none !important;
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         /* ICONOS ESTÁTICOS - ELIMINAMOS COMPLETAMENTE TODOS LOS ICONOS ANIMADOS */
@@ -883,28 +922,28 @@
             .nav-menu.active { left: 0; }
 
             .container {
-                padding: 10px; /* Reducido de 15px */
+                padding: 10px;
             }
 
             .content {
-                padding: 6px 8px; /* Más compacto en móviles */
+                padding: 6px 8px;
                 gap: 6px;
             }
 
             .grid-container {
                 max-width: 250px;
-                gap: 4px; /* Reducido de 6px */
-                margin: 8px auto; /* Reducido */
+                gap: 4px;
+                margin: 8px auto;
             }
 
             .spins-count {
-                font-size: var(--text-sm); /* Reducido de text-base */
-                padding: 3px 8px; /* Reducido */
-                min-width: 50px; /* Reducido */
+                font-size: var(--text-sm);
+                padding: 3px 8px;
+                min-width: 50px;
             }
 
             .spins-section {
-                padding: 6px; /* Reducido */
+                padding: 6px;
             }
         }
 
@@ -981,13 +1020,6 @@
                     Términos y Condiciones
                 </a>
             </li>
-            <!-- CAMBIO 1.2: ENLACE DE CONFIGURACIÓN DE ANUNCIOS -->
-            <li>
-                <a href="#" onclick="window.Android.openAdSettings();" class="nav-link">
-                    <span class="icon">🔒</span>
-                    Configuración de Anuncios
-                </a>
-            </li>
         </ul>
     </div>
 </nav>
@@ -1002,6 +1034,10 @@
             <p id="countdown-container" style="font-size: var(--text-base); font-weight:700; color: var(--text-color);">
                 Termina en: <strong id="countdown">Cargando...</strong>
             </p>
+        </div>
+
+        <div class="admob-banner-container">
+            <div id="admob-banner-1"></div>
         </div>
 
         <div id="myProgress" class="container">
@@ -1023,7 +1059,6 @@
             <div class="grid-container" id="grid-container"></div>
             <button id="spin-button">🎟️ ¡GIRAR RULETA!</button>
 
-            <!-- Nueva sección de giros profesional y compacta -->
             <div class="spins-section" style="margin-top: 8px;">
                 <div class="spins-header">
                     <h3 class="spins-title">🎰 Giros Disponibles</h3>
@@ -1037,6 +1072,10 @@
             </button>
         </div>
 
+        <div class="admob-banner-container">
+            <div id="admob-banner-2"></div>
+        </div>
+
         <div id="mini-leaderboard" class="container" style="background-color: var(--container-bg);">
             <h2 style="font-size: var(--text-base); color: var(--green-accent);">Top 5 de la Semana</h2>
             <div id="mini-leaderboard-list"><p>Cargando clasificación...</p></div>
@@ -1046,6 +1085,10 @@
     </section>
 
     <section id="tasks" class="section">
+        <div class="admob-banner-container">
+            <div id="admob-banner-3"></div>
+        </div>
+
         <div class="container">
             <h2 style="color: var(--purple-accent);">Completa Tareas</h2>
             <p>Gana tickets extra para tener más oportunidades.</p>
@@ -1062,6 +1105,10 @@
     </section>
 
     <section id="leaderboard" class="section">
+        <div class="admob-banner-container">
+            <div id="admob-banner-4"></div>
+        </div>
+
         <div class="container">
             <h2 class="leaderboard-title">🏆 Clasificación Semanal Completa</h2>
             <p>La tabla se actualiza en tiempo real. ¡Consigue más pases para ser el número 1!</p>
@@ -1073,6 +1120,10 @@
     </section>
 
     <section id="winners" class="section">
+        <div class="admob-banner-container">
+            <div id="admob-banner-5"></div>
+        </div>
+
         <div class="container">
             <h2 class="winners">🏆 Muro de la Fama 🏆</h2>
             <p>Aquí se mostrarán los 10 ganadores más recientes.</p>
@@ -1192,8 +1243,6 @@
                     <li>Los premios ofrecidos (Diamantes, Pases Élite, etc.) se adquieren directamente por El Desarrollador a través de tiendas en línea oficiales o autorizadas (como Pagostore) y se envían a los ID de jugador de los ganadores. La Aplicación actúa como un medio para organizar sorteos y distribuir estos premios, sin relación directa con la operación o el mantenimiento del juego Free Fire por parte de Garena.</li>
                     <li>La disponibilidad y la naturaleza de los premios, así como las reglas de los sorteos y la conversión de Tickets a Pases, pueden ser modificadas por El Desarrollador en cualquier momento sin previo aviso. Se hará lo posible por informar a los usuarios sobre cambios significativos.</li>
                     <li>La participación en los sorteos no garantiza la obtención de un premio. Los ganadores se seleccionan al azar entre los participantes elegibles.</li>
-                    <!-- CAMBIO 1.6: PUNTO SOBRE LA SELECCIÓN DE GANADORES -->
-                    <li>Los ganadores serán seleccionados al azar entre los participantes elegibles mediante un sistema automatizado. Los premios se entregarán dentro de los 7 días hábiles posteriores al sorteo, sujeto a la verificación de la elegibilidad del usuario y la validez del ID de jugador proporcionado.</li>
                 </ul>
 
                 <h3>Publicidad y Contenido de Terceros</h3>
@@ -1248,6 +1297,10 @@
     // Variables globales
     let spinning = false;
     const PASS_GOAL = 1000;
+    let initialSpins = 10;
+    let currentSpins = initialSpins;
+    const spinsRewardedPerAd = 10;
+
     const GRID_ITEMS_DATA = [
         { value: 5, label: "tickets" }, { value: 1, label: "ticket" }, { value: 10, label: "tickets" },
         { value: 25, label: "tickets" }, { value: 20, label: "tickets" }, { value: 0, label: "nada" },
@@ -1280,7 +1333,7 @@
         return PROBABILITY_TABLE[0];
     };
 
-    // Algoritmo de mezcla Fisher-Yates
+    // Función para mezclar array (algoritmo Fisher-Yates)
     const shuffleArray = (array) => {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1289,11 +1342,6 @@
         }
         return shuffled;
     };
-
-    // --- ECONOMÍA DE GIROS EN JAVASCRIPT ---
-    let initialSpins = 10;
-    let currentSpins = initialSpins;
-    const spinsRewardedPerAd = 10;
 
     // Referencias a elementos del DOM
     const navMenu = document.getElementById('navMenu');
@@ -1318,6 +1366,10 @@
     };
 
     const showSection = (sectionId) => {
+        if (sectionId !== 'home' && window.Android && window.Android.showInterstitialBeforeSection) {
+            window.Android.showInterstitialBeforeSection(sectionId);
+        }
+
         sections.forEach(s => s.classList.remove('active'));
         document.getElementById(sectionId).classList.add('active');
         navLinks.forEach(l => l.classList.remove('active'));
@@ -1425,7 +1477,7 @@
 
         winnersList.innerHTML = '';
         if (winners.length > 0) {
-            winners.slice(0, 10).forEach(winner => {
+            winners.slice(0, 10).forEach((winner, index) => {
                 const card = document.createElement('div');
                 card.className = 'winner-card';
                 const formattedDate = winner.date || new Date(winner.timestamp).toLocaleDateString('es-ES', {
@@ -1441,6 +1493,16 @@
                     <p class="winner-id">Ganador ID: ${maskPlayerId(winner.winnerId, false)}</p>
                 `;
                 winnersList.appendChild(card);
+
+                if (index < winners.length - 1) {
+                    const bannerContainer = document.createElement('div');
+                    bannerContainer.className = 'admob-banner-container';
+                    const bannerId = `admob-winner-banner-${index}`;
+                    bannerContainer.innerHTML = `<div id="${bannerId}"></div>`;
+                    winnersList.appendChild(bannerContainer);
+
+                    createAdMobBannerSilently(bannerId);
+                }
             });
         } else {
             winnersList.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">Aún no hay ganadores. ¡Podrías ser el primero!</p>';
@@ -1448,10 +1510,44 @@
     };
 
     // **********************************************
-    // FUNCIONES DE LA APP JAVASCRIPT
+    // FUNCIONES DE JAVASCRIPT DE LA APP
     // **********************************************
 
-    // Función para actualizar la UI de giros disponibles
+    function createAdMobBannerSilently(containerId, timeoutMs = 6000) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const bannerContainer = container.closest('.admob-banner-container');
+        if (!bannerContainer) return;
+
+        bannerContainer.style.display = 'none';
+
+        const timeout = setTimeout(() => {
+            console.log(`Banner ${containerId} timeout - keeping hidden`);
+            bannerContainer.style.display = 'none';
+        }, timeoutMs);
+
+        window[`onBannerLoaded_${containerId}`] = () => {
+            clearTimeout(timeout);
+            bannerContainer.style.display = 'flex';
+            bannerContainer.classList.add('loaded');
+            console.log(`Banner ${containerId} loaded successfully and shown`);
+        };
+
+        window[`onBannerFailed_${containerId}`] = () => {
+            clearTimeout(timeout);
+            bannerContainer.style.display = 'none';
+            bannerContainer.classList.remove('loaded');
+            console.log(`Banner ${containerId} failed - keeping hidden`);
+        };
+
+        if (window.Android && window.Android.createAdMobBanner) {
+            window.Android.createAdMobBanner(containerId);
+        } else {
+            setTimeout(() => window[`onBannerFailed_${containerId}`](), 100);
+        }
+    }
+
     const updateSpinCountUI = () => {
         spinsAvailableEl.textContent = currentSpins.toLocaleString();
         if (currentSpins <= 0) {
@@ -1465,7 +1561,6 @@
         }
     };
 
-    // Callback desde Kotlin después de obtener giros por video
     window.onSpinsRewarded = (spinsAdded) => {
         currentSpins += spinsAdded;
         updateSpinCountUI();
@@ -1481,117 +1576,11 @@
         getSpinsButton.disabled = false;
     };
 
-    // Función para verificar si hay ID de jugador configurado
     const checkPlayerId = () => {
         const playerId = window.Android && window.Android.getPlayerId ? window.Android.getPlayerId() : null;
         return playerId && playerId !== "null" && playerId !== "Toca para configurar ✏️" && playerId.trim() !== "";
     };
 
-    // CAMBIO 1.1: AJUSTAR SHOWCONSENTPROMPT PARA EVITAR CIERRE AUTOMÁTICO
-    const showConsentPrompt = () => {
-        try {
-            if (!window.Swal) {
-                console.error("JS: SweetAlert2 no está cargado. Verifica que la biblioteca esté incluida.");
-                return;
-            }
-
-            if (window.Android && window.Android.hasConsented && window.Android.hasConsented()) {
-                console.log("JS: Consentimiento ya otorgado, omitiendo modal.");
-                if (window.Android.loadBannerAd) {
-                    window.Android.loadBannerAd();
-                }
-                return;
-            }
-
-            console.log("JS: Mostrando modal de consentimiento.");
-            Swal.fire({
-                title: '📢 Bienvenido a Club de Recompensas',
-                icon: 'info',
-                html: `
-                    <div style="text-align: left; margin: 15px 0; font-size: var(--text-sm);">
-                        <p style="margin-bottom: 10px;">Usamos anuncios para mantener esta aplicación gratuita y ofrecerte recompensas.</p>
-                        <ul style="color: var(--text-muted); margin-left: 20px; margin-bottom: 15px;">
-                            <li>Anuncios de banner en la parte inferior de la pantalla.</li>
-                            <li>Anuncios recompensados opcionales para ganar tickets o giros.</li>
-                            <li>No estamos afiliados con Garena ni Free Fire. Los premios son adquiridos por el desarrollador.</li>
-                        </ul>
-                        <p style="margin-bottom: 10px;">Al aceptar, das tu consentimiento para:</p>
-                        <ul style="color: var(--text-muted); margin-left: 20px;">
-                            <li>Mostrar anuncios personalizados y no personalizados.</li>
-                            <li>Aceptar nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Política de Privacidad</a> y
-                            <a href="#terms-and-conditions" onclick="window.showSection('terms-and-conditions'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Términos y Condiciones</a>.</li>
-                        </ul>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Aceptar',
-                cancelButtonText: 'Rechazar',
-                confirmButtonColor: '#00A8FF',
-                cancelButtonColor: '#e74c3c',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                allowEnterKey: false // Evita cerrar con la tecla Enter
-            }).then((result) => {
-                console.log("JS: Resultado del modal de consentimiento:", result);
-                if (result.isConfirmed) {
-                    if (window.Android && window.Android.saveConsent) {
-                        console.log("JS: Consentimiento aceptado, guardando...");
-                        window.Android.saveConsent(true);
-                        if (window.Android.loadBannerAd) {
-                            window.Android.loadBannerAd();
-                        }
-                        Swal.fire({
-                            title: '✅ Consentimiento Guardado',
-                            text: 'Gracias por aceptar. ¡Ahora puedes disfrutar de la app!',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        console.error("JS: Interfaz Android no disponible para guardar consentimiento.");
-                    }
-                } else if (result.isDismissed) {
-                    if (window.Android && window.Android.saveConsent) {
-                        console.log("JS: Consentimiento rechazado, guardando...");
-                        window.Android.saveConsent(false);
-                        Swal.fire({
-                            title: '⚠️ Consentimiento Rechazado',
-                            text: 'No se mostrarán anuncios, pero algunas funciones pueden estar limitadas.',
-                            icon: 'warning',
-                            timer: 3000,
-                            showConfirmButton: false
-                        });
-                    } else {
-                        console.error("JS: Interfaz Android no disponible para guardar consentimiento.");
-                    }
-                }
-            });
-        } catch (error) {
-            console.error("JS: Error en showConsentPrompt:", error);
-        }
-    };
-
-    // CAMBIO 1.4: AGREGAR NOTIFICACIÓN DE ACTUALIZACIÓN DE POLÍTICAS
-    const checkPolicyUpdate = () => {
-        const lastPolicyVersion = localStorage.getItem('policyVersion');
-        const currentPolicyVersion = '1.0.0'; // Actualizar según sea necesario
-        if (!lastPolicyVersion || lastPolicyVersion !== currentPolicyVersion) {
-            Swal.fire({
-                title: '📢 Políticas Actualizadas',
-                html: `
-                    <p>Hemos actualizado nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent);">Política de Privacidad</a> y
-                    <a href="#terms-and-conditions" onclick="window.showSection('terms-and-conditions'); Swal.close();" style="color: var(--gold-accent);">Términos y Condiciones</a>.</p>
-                    <p>Por favor, revísalos antes de continuar.</p>
-                `,
-                icon: 'info',
-                confirmButtonText: 'Entendido'
-            }).then(() => {
-                localStorage.setItem('policyVersion', currentPolicyVersion);
-            });
-        }
-    };
-
-    // CAMBIO 1.3: MEJORAR EL MODAL DE CONFIGURACIÓN DE ID
     const showPlayerIdPrompt = () => {
         const currentId = window.Android && window.Android.getPlayerId ? window.Android.getPlayerId() : "";
         const displayCurrentId = (currentId && currentId !== "null" && currentId !== "Toca para configurar ✏️") ? currentId : "";
@@ -1601,9 +1590,6 @@
             icon: displayCurrentId ? 'question' : 'info',
             html: `
                 <p style="margin-bottom: 15px;">Para participar en sorteos y ganar premios, debes configurar tu ID de Free Fire.</p>
-                <p style="color: var(--danger-color); font-size: var(--text-sm); margin-bottom: 15px;">
-                    <strong>Aviso:</strong> Esta aplicación no está afiliada con Garena ni con Free Fire. Los premios son adquiridos por el desarrollador a través de tiendas oficiales.
-                </p>
                 ${displayCurrentId ? '' : `
                     <div style="background: var(--container-bg); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: var(--text-sm); color: var(--text-muted);">
                         Al ingresar tu ID y confirmar, aceptas nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Política de Privacidad</a> y
@@ -1801,7 +1787,6 @@
         }, spinInterval);
     };
 
-    // CAMBIO 1.5: MODIFICAR MODAL DE ANUNCIOS RECOMPENSADOS (GIROS)
     const requestSpinsByWatchingAd = () => {
         if (!checkPlayerId()) {
             Swal.fire({
@@ -1830,7 +1815,7 @@
                         <li>Completamente opcional y voluntario</li>
                     </ul>
                     <p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">
-                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios, según nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent);">Política de Privacidad</a>.
+                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios.
                     </p>
                 </div>
             `,
@@ -1858,7 +1843,6 @@
         });
     };
 
-    // CAMBIO 1.5: MODIFICAR MODAL DE ANUNCIOS RECOMPENSADOS (TAREAS)
     const completeTask = () => {
         console.log("JS: Task button clicked!");
 
@@ -1890,7 +1874,7 @@
                         <li>Completamente opcional y voluntario</li>
                     </ul>
                     <p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">
-                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios, según nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent);">Política de Privacidad</a>.
+                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios.
                     </p>
                 </div>
             `,
@@ -1974,11 +1958,7 @@
     window.showSection = showSection;
 
     document.addEventListener('DOMContentLoaded', () => {
-        // CAMBIOS 1.1 Y 1.4: LLAMAR A LOS NUEVOS MODALES
-        showConsentPrompt();
-        checkPolicyUpdate();
-
-        // Event Listeners de la UI
+        // Event Listeners para la UI
         if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
         if (overlay) overlay.addEventListener('click', toggleMenu);
 
@@ -1999,6 +1979,35 @@
         if (spinButton) spinButton.addEventListener('click', spinGrid);
         if (taskButton) taskButton.addEventListener('click', completeTask);
         if (getSpinsButton) getSpinsButton.addEventListener('click', requestSpinsByWatchingAd);
+
+        // --- INICIO: LÓGICA DE CARGA SILENCIOSA DE BANNERS ---
+        const isAdMobAvailable = window.Android && window.Android.checkAdMobAvailability
+            ? window.Android.checkAdMobAvailability()
+            : (typeof window.Android !== 'undefined');
+
+        if (!isAdMobAvailable) {
+            console.log("AdMob no disponible, ocultando todos los contenedores de banners");
+            const bannerContainers = document.querySelectorAll('.admob-banner-container');
+            bannerContainers.forEach(container => {
+                container.style.display = 'none';
+            });
+        } else {
+            console.log("AdMob disponible, intentando cargar banners silenciosamente...");
+            const bannerIds = [
+                'admob-banner-1',
+                'admob-banner-2',
+                'admob-banner-3',
+                'admob-banner-4',
+                'admob-banner-5'
+            ];
+
+            bannerIds.forEach((bannerId, index) => {
+                setTimeout(() => {
+                    createAdMobBannerSilently(bannerId);
+                }, index * 500);
+            });
+        }
+        // --- FIN: LÓGICA DE CARGA SILENCIOSA DE BANNERS ---
 
         // Inicializar interfaz con datos de Android
         if (window.Android) {

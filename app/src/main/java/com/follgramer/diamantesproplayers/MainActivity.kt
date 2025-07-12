@@ -2,9 +2,11 @@ package com.follgramer.diamantesproplayers
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -13,54 +15,86 @@ import kotlinx.coroutines.launch
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebResourceError
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+
+// Importaciones necesarias para AdMob
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.initialization.InitializationStatus
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.appopen.AppOpenAd
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
+
+// WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
+
+// Firebase Logging
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
-import com.google.android.ump.ConsentInformation
-import com.google.android.ump.ConsentRequestParameters
-import com.google.android.ump.UserMessagingPlatform
-import android.os.Handler
-import android.os.Looper
-import android.os.Bundle as AndroidBundle
-import com.google.ads.mediation.admob.AdMobAdapter
-import android.webkit.ConsoleMessage
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     private lateinit var webView: ObservableWebView
     private lateinit var webAppInterface: WebAppInterface
     private lateinit var adView: AdView
+    private lateinit var appOpenAdManager: AppOpenAdManager
+
+    // Anuncios
     private var mRewardedAdForTask: RewardedAd? = null
     private var mRewardedAdForSpins: RewardedAd? = null
-    private var retryCountTask = 0
-    private var retryCountSpins = 0
-    private val maxRetries = 3
-    private val retryDelayMs = 5000L
+    private var mInterstitialAd: InterstitialAd? = null
 
-    private val rewardedAdTaskUnitId = BuildConfig.REWARDED_AD_TASK_ID
-    private val rewardedAdSpinsUnitId = BuildConfig.REWARDED_AD_SPINS_ID
+    // Control de tiempo para intersticiales
+    private var lastInterstitialTime = 0L
+    private val INTERSTITIAL_COOLDOWN = 30000L // 30 segundos entre intersticiales
+
+    // IDs de anuncios de prueba - Cámbialos por tus IDs reales cuando publiques
+    private val rewardedAdTaskUnitId = "ca-app-pub-3940256099942544/5224354917"
+    private val rewardedAdSpinsUnitId = "ca-app-pub-3940256099942544/5224354917"
+    private val interstitialAdUnitId = "ca-app-pub-3940256099942544/1033173712"
+    private val appOpenAdUnitId = "ca-app-pub-3940256099942544/9257395921"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        super<AppCompatActivity>.onCreate(savedInstanceState)
 
+        // Configurar Firebase Database para debug
         FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
 
         webView = findViewById(R.id.webView)
-        adView = findViewById(R.id.adView)
 
+        // Configuración e inicialización de AdMob
+        MobileAds.initialize(this) { initializationStatus ->
+            Log.d("AdMob", "AdMob inicializado: ${initializationStatus.adapterStatusMap}")
+            // Cargar anuncios después de la inicialización
+            loadRewardedAdForTask()
+            loadRewardedAdForSpins()
+            loadInterstitialAd()
+        }
+
+        // Inicializar App Open Ad Manager
+        appOpenAdManager = AppOpenAdManager()
+
+        // Registrar observer del ciclo de vida de la aplicación
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
+        // Configurar banner ad
+        adView = findViewById(R.id.adView)
+        val adRequestBanner = AdRequest.Builder().build()
+        adView.loadAd(adRequestBanner)
+
+        // Configuración del WebView
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -71,40 +105,39 @@ class MainActivity : AppCompatActivity() {
             setSupportZoom(false)
             builtInZoomControls = false
             displayZoomControls = false
-            cacheMode = android.webkit.WebSettings.LOAD_DEFAULT
-            javaScriptCanOpenWindowsAutomatically = false // Evita ventanas emergentes no deseadas
         }
 
-        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
+        // Habilitar debug para WebView (solo en desarrollo)
+        WebView.setWebContentsDebuggingEnabled(true)
 
+        // Configurar AssetLoader para cargar archivos locales
         val assetLoader = WebViewAssetLoader.Builder()
-            .setDomain("appassets.androidplatform.net")
             .addPathHandler("/assets/", AssetsPathHandler(this))
             .build()
 
+        // Inicializar WebAppInterface
         webAppInterface = WebAppInterface(this, webView, this)
         webView.addJavascriptInterface(webAppInterface, "Android")
         Log.d("MainActivity", "JavaScript interface 'Android' added to WebView.")
 
+        // Configurar WebViewClient
         webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(
                 view: WebView,
                 request: WebResourceRequest
             ): WebResourceResponse? {
-                Log.d("MainActivity", "Interceptando solicitud: ${request.url}")
-                val response = assetLoader.shouldInterceptRequest(request.url)
-                if (response == null) {
-                    Log.e("MainActivity", "No se pudo cargar el recurso: ${request.url}")
-                }
-                return response
+                return assetLoader.shouldInterceptRequest(request.url)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                Log.d("MainActivity", "WebView página terminada de cargar: $url")
                 if (url?.startsWith("https://appassets.androidplatform.net/assets/index.html") == true) {
+                    Log.d("MainActivity", "WebView page finished loading: $url")
+
                     lifecycleScope.launch {
+                        // Inyectar funciones JavaScript necesarias
                         val jsFunctionDefinitionsCode = """
+                            // Función para mostrar prompt de transferencia de tickets después de ver video
                             window.showTicketTransferPrompt = function(rewardAmount, currentId) {
                                 console.log('showTicketTransferPrompt called with:', rewardAmount, currentId);
                                 
@@ -113,9 +146,11 @@ class MainActivity : AppCompatActivity() {
                                     return;
                                 }
                                 
+                                // Agregar tickets directamente
                                 if (window.Android && window.Android.addTickets) {
                                     window.Android.addTickets(rewardAmount);
                                     
+                                    // Mostrar mensaje de éxito
                                     Swal.fire({
                                         title: '🎉 ¡Video Completado!',
                                         html: '<p>¡Has ganado <strong style="color: #ffd43b;">' + rewardAmount + ' tickets</strong>!</p>',
@@ -124,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                                         showConfirmButton: false
                                     });
                                     
+                                    // Restablecer botón de tarea
                                     const taskButton = document.getElementById('task-button');
                                     if (taskButton) {
                                         taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
@@ -136,6 +172,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             };
                             
+                            // Función de respaldo para showToast si no está definida
                             if (typeof Android !== 'undefined' && Android.showToast === undefined) {
                                 Android.showToast = function(toast) { 
                                     console.log('Toast:', toast); 
@@ -145,11 +182,11 @@ class MainActivity : AppCompatActivity() {
                             console.log('JavaScript bridge functions loaded successfully.');
                         """.trimIndent()
 
-                        webView.evaluateJavascript(jsFunctionDefinitionsCode, { result ->
-                            Log.d("MainActivity", "JavaScript injection result: $result")
-                        })
+                        webView.evaluateJavascript(jsFunctionDefinitionsCode, null)
+                        Log.d("MainActivity", "JavaScript bridge functions injected AFTER page finished.")
                     }
 
+                    // Obtener datos iniciales después de que la página cargue
                     webAppInterface.getInitialData()
                 }
             }
@@ -161,54 +198,17 @@ class MainActivity : AppCompatActivity() {
             ) {
                 super.onReceivedError(view, request, error)
                 Log.e("MainActivity", "WebView error: ${error?.errorCode} - ${error?.description} at ${request?.url}")
-                val errorMessage = when (error?.errorCode) {
-                    WebViewClient.ERROR_HOST_LOOKUP -> "No se pudo resolver el host. Verifica tu conexión a internet."
-                    WebViewClient.ERROR_CONNECT -> "Error de conexión. Asegúrate de estar conectado a internet."
-                    WebViewClient.ERROR_TIMEOUT -> "Tiempo de espera agotado. Intenta de nuevo."
-                    WebViewClient.ERROR_FILE_NOT_FOUND -> "Archivo no encontrado. Verifica que 'index.html' esté en la carpeta assets."
-                    else -> "Error al cargar la página: ${error?.description}. Verifica tu conexión a internet."
-                }
-                webView.evaluateJavascript(
-                    """
-                    if (window.Swal) {
-                        Swal.fire('Error', '$errorMessage', 'error');
-                    } else {
-                        console.error('SweetAlert2 no está disponible para mostrar el error: $errorMessage');
-                    }
-                    """.trimIndent(),
-                    null
-                )
             }
         }
 
-        webView.webChromeClient = object : WebChromeClient() {
-            override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-                consoleMessage?.let {
-                    Log.d("WebViewConsole", "${it.message()} -- From line ${it.lineNumber()} of ${it.sourceId()}")
-                }
-                return true
-            }
-        }
+        // Configurar WebChromeClient para mejor soporte de JavaScript
+        webView.webChromeClient = WebChromeClient()
 
-        try {
-            webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
-            Log.d("MainActivity", "WebView intentando cargar URL: https://appassets.androidplatform.net/assets/index.html")
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error al cargar URL en WebView: ${e.message}")
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'Error al inicializar la página. Verifica que index.html esté en assets.', 'error');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error de inicialización.');
-                }
-                """.trimIndent(),
-                null
-            )
-        }
+        // Cargar la página principal
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
+        Log.d("MainActivity", "WebView loaded URL: https://appassets.androidplatform.net/assets/index.html")
 
-        requestConsentAndInitializeAds()
-
+        // Configurar manejo del botón de retroceso
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (webView.canGoBack()) {
@@ -221,170 +221,53 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun requestConsentAndInitializeAds() {
-        Log.d("AdMob", "Iniciando solicitud de consentimiento")
-        val params = ConsentRequestParameters.Builder()
-            .setTagForUnderAgeOfConsent(false)
-            .build()
-
-        val consentInformation = UserMessagingPlatform.getConsentInformation(this)
-        consentInformation.requestConsentInfoUpdate(
-            this,
-            params,
-            {
-                Log.d("AdMob", "Información de consentimiento obtenida. ConsentStatus: ${consentInformation.consentStatus}")
-                if (consentInformation.isConsentFormAvailable) {
-                    UserMessagingPlatform.loadConsentForm(
-                        this,
-                        { consentForm ->
-                            Log.d("AdMob", "Formulario de consentimiento cargado, mostrando...")
-                            consentForm.show(this) { formError ->
-                                if (formError == null && consentInformation.consentStatus == ConsentInformation.ConsentStatus.OBTAINED) {
-                                    Log.d("AdMob", "Consentimiento otorgado, inicializando AdMob")
-                                    initializeAdMob()
-                                } else {
-                                    Log.e("AdMob", "Error al mostrar formulario de consentimiento: ${formError?.message}")
-                                    initializeAdMob()
-                                }
-                            }
-                        },
-                        { formError ->
-                            Log.e("AdMob", "Error cargando formulario de consentimiento: ${formError.message}")
-                            initializeAdMob()
-                        }
-                    )
-                } else {
-                    Log.d("AdMob", "No hay formulario de consentimiento disponible, inicializando AdMob")
-                    initializeAdMob()
-                }
-            },
-            { requestError ->
-                Log.e("AdMob", "Error solicitando información de consentimiento: ${requestError.message}")
-                initializeAdMob()
-            }
-        )
+    // --- App Open Ad Implementation ---
+    override fun onStart(owner: LifecycleOwner) {
+        super<DefaultLifecycleObserver>.onStart(owner)
+        appOpenAdManager.showAdIfAvailable(this)
     }
 
-    private fun initializeAdMob() {
-        MobileAds.initialize(this, object : OnInitializationCompleteListener {
-            override fun onInitializationComplete(status: InitializationStatus) {
-                Log.d("AdMob", "AdMob inicializado: ${status.adapterStatusMap}")
-                loadRewardedAdForTask()
-                loadRewardedAdForSpins()
-            }
-        })
-    }
-
-    fun loadBannerAd() {
-        val extras = AndroidBundle()
-        if (!webAppInterface.hasConsented()) {
-            extras.putString("npa", "1")
-        }
-        val adRequest = AdRequest.Builder()
-            .addNetworkExtrasBundle(com.google.ads.mediation.admob.AdMobAdapter::class.java, extras)
-            .build()
-        adView.loadAd(adRequest)
-        Log.d("AdMob", "Banner ad loaded after user consent.")
-    }
+    // --- Métodos para cargar anuncios ---
 
     private fun loadRewardedAdForTask() {
-        if (retryCountTask >= maxRetries) {
-            Log.d("AdMob", "Máximo de reintentos alcanzado para RewardedAdForTask.")
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'No se pudo cargar el anuncio. Verifica tu conexión e intenta de nuevo más tarde.', 'error');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error.');
-                }
-                const taskButton = document.getElementById('task-button');
-                if (taskButton) {
-                    taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
-                    taskButton.style.background = 'var(--purple-accent)';
-                    taskButton.disabled = false;
-                }
-                """.trimIndent(), null
-            )
-            return
-        }
-
-        val extras = AndroidBundle()
-        if (!webAppInterface.hasConsented()) {
-            extras.putString("npa", "1")
-        }
-        val adRequest = AdRequest.Builder()
-            .addNetworkExtrasBundle(com.google.ads.mediation.admob.AdMobAdapter::class.java, extras)
-            .build()
+        val adRequest = AdRequest.Builder().build()
         RewardedAd.load(this, rewardedAdTaskUnitId, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("AdMob", "RewardedAdForTask falló al cargar: ${adError.message}, code: ${adError.code}")
+                Log.d("AdMob", "RewardedAdForTask falló al cargar: ${adError.message}")
                 mRewardedAdForTask = null
-                retryCountTask++
-                val errorMessage = when (adError.code) {
-                    AdRequest.ERROR_CODE_NO_FILL -> "No hay anuncios disponibles en este momento."
-                    AdRequest.ERROR_CODE_NETWORK_ERROR -> "Error de red. Verifica tu conexión a internet."
-                    else -> "Error al cargar el anuncio. Intenta de nuevo."
-                }
-                webView.evaluateJavascript(
-                    """
-                    if (window.Swal) {
-                        Swal.fire('Error', '$errorMessage', 'error');
-                    } else {
-                        console.error('SweetAlert2 no está disponible para mostrar el error: $errorMessage');
-                    }
-                    const taskButton = document.getElementById('task-button');
-                    if (taskButton) {
-                        taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
-                        taskButton.style.background = 'var(--purple-accent)';
-                        taskButton.disabled = false;
-                    }
-                    """.trimIndent(), null
-                )
-                Handler(Looper.getMainLooper()).postDelayed({
-                    loadRewardedAdForTask()
-                }, retryDelayMs)
             }
 
             override fun onAdLoaded(rewardedAd: RewardedAd) {
                 Log.d("AdMob", "RewardedAdForTask cargado correctamente.")
                 mRewardedAdForTask = rewardedAd
-                retryCountTask = 0
                 mRewardedAdForTask?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         Log.d("AdMob", "RewardedAdForTask falló al mostrar: ${adError.message}")
                         mRewardedAdForTask = null
                         loadRewardedAdForTask()
-                        webView.evaluateJavascript(
-                            """
-                            if (window.Swal) {
-                                Swal.fire('Error', 'El video no se pudo mostrar. Intenta de nuevo.', 'error');
-                            } else {
-                                console.error('SweetAlert2 no está disponible para mostrar el error.');
-                            }
+                        webView.evaluateJavascript("""
                             const taskButton = document.getElementById('task-button');
                             if (taskButton) {
                                 taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
                                 taskButton.style.background = 'var(--purple-accent)';
                                 taskButton.disabled = false;
                             }
-                            """.trimIndent(), null
-                        )
+                            Swal.fire('Error', 'El video no se pudo mostrar. Intenta de nuevo.', 'error');
+                        """.trimIndent(), null)
                     }
 
                     override fun onAdDismissedFullScreenContent() {
                         Log.d("AdMob", "RewardedAdForTask fue cerrado.")
                         mRewardedAdForTask = null
                         loadRewardedAdForTask()
-                        webView.evaluateJavascript(
-                            """
+                        webView.evaluateJavascript("""
                             const taskButton = document.getElementById('task-button');
                             if (taskButton && taskButton.disabled) {
                                 taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
                                 taskButton.style.background = 'var(--purple-accent)';
                                 taskButton.disabled = false;
                             }
-                            """.trimIndent(), null
-                        )
+                        """.trimIndent(), null)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -396,103 +279,44 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadRewardedAdForSpins() {
-        if (retryCountSpins >= maxRetries) {
-            Log.d("AdMob", "Máximo de reintentos alcanzado para RewardedAdForSpins.")
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'No se pudo cargar el anuncio. Verifica tu conexión e intenta de nuevo más tarde.', 'error');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error.');
-                }
-                const getSpinsButton = document.getElementById('get-spins-button');
-                if (getSpinsButton) {
-                    getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
-                    getSpinsButton.style.background = 'var(--gold-accent)';
-                    getSpinsButton.disabled = false;
-                }
-                """.trimIndent(), null
-            )
-            return
-        }
-
-        val extras = AndroidBundle()
-        if (!webAppInterface.hasConsented()) {
-            extras.putString("npa", "1")
-        }
-        val adRequest = AdRequest.Builder()
-            .addNetworkExtrasBundle(com.google.ads.mediation.admob.AdMobAdapter::class.java, extras)
-            .build()
+        val adRequest = AdRequest.Builder().build()
         RewardedAd.load(this, rewardedAdSpinsUnitId, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("AdMob", "RewardedAdForSpins falló al cargar: ${adError.message}, code: ${adError.code}")
+                Log.d("AdMob", "RewardedAdForSpins falló al cargar: ${adError.message}")
                 mRewardedAdForSpins = null
-                retryCountSpins++
-                val errorMessage = when (adError.code) {
-                    AdRequest.ERROR_CODE_NO_FILL -> "No hay anuncios disponibles en este momento."
-                    AdRequest.ERROR_CODE_NETWORK_ERROR -> "Error de red. Verifica tu conexión a internet."
-                    else -> "Error al cargar el anuncio. Intenta de nuevo."
-                }
-                webView.evaluateJavascript(
-                    """
-                    if (window.Swal) {
-                        Swal.fire('Error', '$errorMessage', 'error');
-                    } else {
-                        console.error('SweetAlert2 no está disponible para mostrar el error: $errorMessage');
-                    }
-                    const getSpinsButton = document.getElementById('get-spins-button');
-                    if (getSpinsButton) {
-                        getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
-                        getSpinsButton.style.background = 'var(--gold-accent)';
-                        getSpinsButton.disabled = false;
-                    }
-                    """.trimIndent(), null
-                )
-                Handler(Looper.getMainLooper()).postDelayed({
-                    loadRewardedAdForSpins()
-                }, retryDelayMs)
             }
 
             override fun onAdLoaded(rewardedAd: RewardedAd) {
                 Log.d("AdMob", "RewardedAdForSpins cargado correctamente.")
                 mRewardedAdForSpins = rewardedAd
-                retryCountSpins = 0
                 mRewardedAdForSpins?.fullScreenContentCallback = object : FullScreenContentCallback() {
                     override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                         Log.d("AdMob", "RewardedAdForSpins falló al mostrar: ${adError.message}")
                         mRewardedAdForSpins = null
                         loadRewardedAdForSpins()
-                        webView.evaluateJavascript(
-                            """
-                            if (window.Swal) {
-                                Swal.fire('Error', 'El video para giros no se pudo mostrar. Intenta de nuevo.', 'error');
-                            } else {
-                                console.error('SweetAlert2 no está disponible para mostrar el error.');
-                            }
+                        webView.evaluateJavascript("""
                             const getSpinsButton = document.getElementById('get-spins-button');
                             if (getSpinsButton) {
                                 getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
                                 getSpinsButton.style.background = 'var(--gold-accent)';
                                 getSpinsButton.disabled = false;
                             }
-                            """.trimIndent(), null
-                        )
+                            Swal.fire('Error', 'El video para giros no se pudo mostrar. Intenta de nuevo.', 'error');
+                        """.trimIndent(), null)
                     }
 
                     override fun onAdDismissedFullScreenContent() {
                         Log.d("AdMob", "RewardedAdForSpins fue cerrado.")
                         mRewardedAdForSpins = null
                         loadRewardedAdForSpins()
-                        webView.evaluateJavascript(
-                            """
+                        webView.evaluateJavascript("""
                             const getSpinsButton = document.getElementById('get-spins-button');
                             if (getSpinsButton && getSpinsButton.disabled) {
                                 getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
                                 getSpinsButton.style.background = 'var(--gold-accent)';
                                 getSpinsButton.disabled = false;
                             }
-                            """.trimIndent(), null
-                        )
+                        """.trimIndent(), null)
                     }
 
                     override fun onAdShowedFullScreenContent() {
@@ -503,25 +327,91 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun loadInterstitialAd() {
+        val adRequest = AdRequest.Builder().build()
+        InterstitialAd.load(this, interstitialAdUnitId, adRequest, object : InterstitialAdLoadCallback() {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("AdMob", "Interstitial falló al cargar: ${adError.message}")
+                mInterstitialAd = null
+            }
+
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                Log.d("AdMob", "Interstitial cargado correctamente.")
+                mInterstitialAd = interstitialAd
+                mInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                        Log.d("AdMob", "Interstitial falló al mostrar: ${adError.message}")
+                        mInterstitialAd = null
+                        loadInterstitialAd()
+                    }
+
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d("AdMob", "Interstitial fue cerrado.")
+                        mInterstitialAd = null
+                        loadInterstitialAd()
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        Log.d("AdMob", "Interstitial mostrado.")
+                    }
+                }
+            }
+        })
+    }
+
+    // =================================================================
+    // =========== NUEVA FUNCIÓN AGREGADA ==============================
+    // =================================================================
+    fun insertBannerIntoWebView(containerId: String, adView: AdView) {
+        try {
+            // Crear un contenedor para el banner
+            val bannerContainer = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                gravity = Gravity.CENTER
+                addView(adView)
+            }
+
+            // Insertar el banner en el layout principal
+            // Asegúrate de que tu layout principal en activity_main.xml tenga el ID "main_layout"
+            // y que sea un LinearLayout u otro ViewGroup que permita agregar vistas dinámicamente.
+            val mainLayout = findViewById<LinearLayout>(R.id.main_layout)
+
+            // Encontrar la posición donde insertar el banner basado en el containerId
+            val insertPosition = when (containerId) {
+                "banner_top" -> 0
+                "banner_middle" -> mainLayout.childCount / 2
+                "banner_bottom" -> mainLayout.childCount
+                else -> mainLayout.childCount
+            }
+
+            mainLayout.addView(bannerContainer, insertPosition)
+
+            Log.d("MainActivity", "Banner inserted successfully for: $containerId")
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error inserting banner: ${e.message}")
+        }
+    }
+    // =================================================================
+
+    // --- Métodos públicos para mostrar anuncios ---
+
     fun requestRewardedAdForTask(rewardAmount: Int, currentId: String) {
         Log.d("AdMob", "requestRewardedAdForTask called with reward: $rewardAmount, currentId: $currentId")
 
         if (currentId.isEmpty() || currentId == "null") {
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'Configura tu ID de jugador primero.', 'warning');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error.');
-                }
+            webView.evaluateJavascript("""
+                Swal.fire('Error', 'Configura tu ID de jugador primero.', 'warning');
                 const taskButton = document.getElementById('task-button');
                 if (taskButton) {
                     taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
                     taskButton.style.background = 'var(--purple-accent)';
                     taskButton.disabled = false;
                 }
-                """.trimIndent(), null
-            )
+            """.trimIndent(), null)
             return
         }
 
@@ -534,21 +424,15 @@ class MainActivity : AppCompatActivity() {
         } else {
             Log.d("AdMob", "RewardedAd para tarea no está listo. Cargando uno nuevo.")
             loadRewardedAdForTask()
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'El video no está listo. Intenta de nuevo en unos segundos.', 'error');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error.');
-                }
+            webView.evaluateJavascript("""
+                Swal.fire('Error', 'El video no está listo. Intenta de nuevo en unos segundos.', 'error');
                 const taskButton = document.getElementById('task-button');
                 if (taskButton) {
                     taskButton.textContent = '📺 Ver un Video (+20 Tickets)';
                     taskButton.style.background = 'var(--purple-accent)';
                     taskButton.disabled = false;
                 }
-                """.trimIndent(), null
-            )
+            """.trimIndent(), null)
         }
     }
 
@@ -564,21 +448,119 @@ class MainActivity : AppCompatActivity() {
         } else {
             Log.d("AdMob", "RewardedAd para giros no está listo. Cargando uno nuevo.")
             loadRewardedAdForSpins()
-            webView.evaluateJavascript(
-                """
-                if (window.Swal) {
-                    Swal.fire('Error', 'El video para giros no está listo. Intenta de nuevo en unos segundos.', 'error');
-                } else {
-                    console.error('SweetAlert2 no está disponible para mostrar el error.');
-                }
+            webView.evaluateJavascript("""
                 const getSpinsButton = document.getElementById('get-spins-button');
                 if (getSpinsButton) {
                     getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
                     getSpinsButton.style.background = 'var(--gold-accent)';
                     getSpinsButton.disabled = false;
                 }
-                """.trimIndent(), null
+                Swal.fire('Error', 'El video para giros no está listo. Intenta de nuevo en unos segundos.', 'error');
+            """.trimIndent(), null)
+        }
+    }
+
+    // Función para mostrar intersticiales con control de frecuencia
+    fun showInterstitialWithCooldown() {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastInterstitialTime < INTERSTITIAL_COOLDOWN) {
+            Log.d("AdMob", "Interstitial en cooldown, no se mostrará")
+            return
+        }
+
+        if (mInterstitialAd != null) {
+            mInterstitialAd?.show(this)
+            lastInterstitialTime = currentTime
+            Log.d("AdMob", "Mostrando Interstitial")
+        } else {
+            Log.d("AdMob", "Interstitial no está listo")
+            loadInterstitialAd()
+        }
+    }
+
+    // --- App Open Ad Manager ---
+    private inner class AppOpenAdManager {
+        private var appOpenAd: AppOpenAd? = null
+        private var isLoadingAd = false
+        private var isShowingAd = false
+        private var loadTime: Long = 0
+
+        init {
+            loadAd()
+        }
+
+        private fun loadAd() {
+            if (isLoadingAd || isAdAvailable()) {
+                return
+            }
+
+            isLoadingAd = true
+            val request = AdRequest.Builder().build()
+            AppOpenAd.load(
+                this@MainActivity,
+                appOpenAdUnitId,
+                request,
+                object : AppOpenAdLoadCallback() {
+                    override fun onAdLoaded(ad: AppOpenAd) {
+                        Log.d("AdMob", "App Open Ad cargado")
+                        appOpenAd = ad
+                        isLoadingAd = false
+                        loadTime = System.currentTimeMillis()
+                    }
+
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        Log.d("AdMob", "App Open Ad falló: ${loadAdError.message}")
+                        isLoadingAd = false
+                    }
+                }
             )
+        }
+
+        private fun wasLoadTimeLessThanNHoursAgo(numHours: Long): Boolean {
+            val dateDifference = System.currentTimeMillis() - loadTime
+            val numMilliSecondsPerHour: Long = 3600000
+            return dateDifference < numMilliSecondsPerHour * numHours
+        }
+
+        private fun isAdAvailable(): Boolean {
+            return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4)
+        }
+
+        fun showAdIfAvailable(activity: MainActivity) {
+            if (isShowingAd) {
+                Log.d("AdMob", "App Open Ad ya se está mostrando")
+                return
+            }
+
+            if (!isAdAvailable()) {
+                Log.d("AdMob", "App Open Ad no disponible")
+                loadAd()
+                return
+            }
+
+            appOpenAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d("AdMob", "App Open Ad cerrado")
+                    appOpenAd = null
+                    isShowingAd = false
+                    loadAd()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    Log.d("AdMob", "App Open Ad falló al mostrar: ${adError.message}")
+                    appOpenAd = null
+                    isShowingAd = false
+                    loadAd()
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d("AdMob", "App Open Ad mostrado")
+                    isShowingAd = true
+                }
+            }
+
+            isShowingAd = true
+            appOpenAd?.show(activity)
         }
     }
 
@@ -586,9 +568,14 @@ class MainActivity : AppCompatActivity() {
         if (::adView.isInitialized) {
             adView.destroy()
         }
-        mRewardedAdForTask = null
-        mRewardedAdForSpins = null
-        super.onDestroy()
+        ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
+
+        // Limpiar WebAppInterface
+        if (::webAppInterface.isInitialized) {
+            webAppInterface.cleanup()
+        }
+
+        super<AppCompatActivity>.onDestroy()
         webView.destroy()
     }
 
@@ -596,13 +583,13 @@ class MainActivity : AppCompatActivity() {
         if (::adView.isInitialized) {
             adView.pause()
         }
-        super.onPause()
+        super<AppCompatActivity>.onPause()
     }
 
     override fun onResume() {
         if (::adView.isInitialized) {
             adView.resume()
         }
-        super.onResume()
+        super<AppCompatActivity>.onResume()
     }
 }
