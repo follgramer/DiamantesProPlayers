@@ -2,11 +2,9 @@ package com.follgramer.diamantesproplayers
 
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -359,44 +357,6 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         })
     }
 
-    // =================================================================
-    // =========== NUEVA FUNCIÓN AGREGADA ==============================
-    // =================================================================
-    fun insertBannerIntoWebView(containerId: String, adView: AdView) {
-        try {
-            // Crear un contenedor para el banner
-            val bannerContainer = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-                gravity = Gravity.CENTER
-                addView(adView)
-            }
-
-            // Insertar el banner en el layout principal
-            // Asegúrate de que tu layout principal en activity_main.xml tenga el ID "main_layout"
-            // y que sea un LinearLayout u otro ViewGroup que permita agregar vistas dinámicamente.
-            val mainLayout = findViewById<LinearLayout>(R.id.main_layout)
-
-            // Encontrar la posición donde insertar el banner basado en el containerId
-            val insertPosition = when (containerId) {
-                "banner_top" -> 0
-                "banner_middle" -> mainLayout.childCount / 2
-                "banner_bottom" -> mainLayout.childCount
-                else -> mainLayout.childCount
-            }
-
-            mainLayout.addView(bannerContainer, insertPosition)
-
-            Log.d("MainActivity", "Banner inserted successfully for: $containerId")
-        } catch (e: Exception) {
-            Log.e("MainActivity", "Error inserting banner: ${e.message}")
-        }
-    }
-    // =================================================================
-
     // --- Métodos públicos para mostrar anuncios ---
 
     fun requestRewardedAdForTask(rewardAmount: Int, currentId: String) {
@@ -568,6 +528,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         if (::adView.isInitialized) {
             adView.destroy()
         }
+
         ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
 
         // Limpiar WebAppInterface

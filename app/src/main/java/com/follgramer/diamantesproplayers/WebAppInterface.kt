@@ -2,22 +2,16 @@ package com.follgramer.diamantesproplayers
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.widget.Toast
+import com.google.android.gms.ads.*
 import com.google.firebase.database.*
+import com.google.firebase.functions.FirebaseFunctions
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import android.util.Log
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import android.view.ViewGroup // Importado para los cambios
 
 class WebAppInterface(
     private val context: Context,
@@ -35,7 +29,7 @@ class WebAppInterface(
     private var usersListener: ValueEventListener? = null
     private var privateMessageListener: ValueEventListener? = null
 
-    private var activeBanners = HashMap<String, AdView>()
+    // La variable activeBanners ha sido eliminada.
 
     init {
         loadInitialData()
@@ -119,6 +113,7 @@ class WebAppInterface(
         }
     }
 
+    // --- FUNCIÓN REEMPLAZADA ---
     @JavascriptInterface
     fun showInterstitialBeforeSection(sectionName: String) {
         Log.d("AppInterface", "showInterstitialBeforeSection() called for section: $sectionName")
@@ -139,153 +134,21 @@ class WebAppInterface(
         }
     }
 
+    // --- FUNCIÓN REEMPLAZADA (SIMPLIFICADA) ---
     @JavascriptInterface
     fun checkAdMobAvailability(): Boolean {
-        return try {
-            val initStatus = MobileAds.getInitializationStatus()
-            val isAvailable = initStatus != null
-            Log.d("AppInterface", "AdMob availability check: $isAvailable")
-            isAvailable
-        } catch (e: Exception) {
-            Log.e("AppInterface", "AdMob not available: ${e.message}")
-            false
-        }
+        return true // AdMob siempre disponible para intersticiales y rewarded ads
     }
 
-    @JavascriptInterface
-    fun createAdMobBanner(containerId: String) {
-        Log.d("AppInterface", "createAdMobBanner called for: $containerId")
-
-        try {
-            mainActivity.runOnUiThread {
-                createBannerInternal(containerId)
-            }
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error in createAdMobBanner: ${e.message}")
-            notifyBannerFailed(containerId)
-        }
-    }
-
-    private fun createBannerInternal(containerId: String) {
-        try {
-            // Verificar si ya existe un banner y destruirlo
-            activeBanners[containerId]?.let { existingAdView ->
-                Log.d("AppInterface", "Banner already exists for $containerId, destroying old one")
-                existingAdView.destroy()
-                activeBanners.remove(containerId)
-            }
-
-            // Crear AdView con el tamaño especificado en el constructor usando .apply
-            val newAdView = AdView(context).apply {
-                setAdSize(AdSize.BANNER)
-                adUnitId = "ca-app-pub-3940256099942544/6300978111" // ID de prueba
-            }
-
-            newAdView.adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    super.onAdLoaded()
-                    Log.d("AppInterface", "Banner loaded successfully: $containerId")
-                    activeBanners[containerId] = newAdView
-                    notifyBannerLoaded(containerId)
-                }
-
-                override fun onAdFailedToLoad(adError: LoadAdError) {
-                    super.onAdFailedToLoad(adError)
-                    Log.e("AppInterface", "Banner failed to load: $containerId - ${adError.message}")
-                    activeBanners.remove(containerId)
-                    notifyBannerFailed(containerId)
-                }
-            }
-
-            val adRequest = AdRequest.Builder().build()
-            newAdView.loadAd(adRequest)
-
-            Log.d("AppInterface", "Real banner creation initiated for: $containerId")
-
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error creating real AdMob banner: ${e.message}")
-            notifyBannerFailed(containerId)
-        }
-    }
-
-    // --- FUNCIÓN MODIFICADA ---
-    private fun notifyBannerLoaded(containerId: String) {
-        try {
-            val adView = activeBanners[containerId]
-            if (adView != null) {
-                // Insertar el banner en la vista
-                mainActivity.insertBannerIntoWebView(containerId, adView)
-            }
-
-            val script = "if(window.onBannerLoaded_$containerId) { window.onBannerLoaded_$containerId(); }"
-            webView.evaluateJavascript(script, null)
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error notifying banner loaded: ${e.message}")
-        }
-    }
-
-    private fun notifyBannerFailed(containerId: String) {
-        try {
-            val script = "if(window.onBannerFailed_$containerId) { window.onBannerFailed_$containerId(); }"
-            webView.evaluateJavascript(script, null)
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error notifying banner failed: ${e.message}")
-        }
-    }
-
-    // --- FUNCIÓN MODIFICADA ---
-    @JavascriptInterface
-    fun destroyAdMobBanner(containerId: String) {
-        Log.d("AppInterface", "destroyAdMobBanner called for: $containerId")
-
-        try {
-            mainActivity.runOnUiThread {
-                activeBanners[containerId]?.let { adView ->
-                    // Remover el banner de la vista
-                    val parent = adView.parent as? ViewGroup
-                    parent?.removeView(adView)
-
-                    adView.destroy()
-                    activeBanners.remove(containerId)
-                    Log.d("AppInterface", "Banner destroyed successfully: $containerId")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error destroying banner: ${e.message}")
-        }
-    }
-
-    @JavascriptInterface
-    fun destroyAllAdMobBanners() {
-        Log.d("AppInterface", "destroyAllAdMobBanners called")
-
-        try {
-            mainActivity.runOnUiThread {
-                val bannersCopy = HashMap(activeBanners)
-                bannersCopy.values.forEach { adView ->
-                    try {
-                        adView.destroy()
-                    } catch (e: Exception) {
-                        Log.e("AppInterface", "Error destroying a banner during cleanup: ${e.message}")
-                    }
-                }
-                activeBanners.clear()
-                Log.d("AppInterface", "All banners destroyed")
-            }
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error destroying all banners: ${e.message}")
-        }
-    }
-
-    @JavascriptInterface
-    fun getActiveBannersCount(): Int {
-        return try {
-            activeBanners.size
-        } catch (e: Exception) {
-            Log.e("AppInterface", "Error getting banners count: ${e.message}")
-            0
-        }
-    }
+    // --- TODAS LAS FUNCIONES DE BANNER HAN SIDO ELIMINADAS ---
+    // - createAdMobBanner
+    // - createBannerInternal
+    // - notifyBannerLoaded
+    // - notifyBannerFailed
+    // - onSectionChanged
+    // - destroyAdMobBanner
+    // - destroyAllAdMobBanners
+    // - getActiveBannersCount
 
     private fun initializeUser(playerId: String) {
         Log.d("AppInterface", "Initializing user: $playerId")
@@ -372,6 +235,7 @@ class WebAppInterface(
         }
     }
 
+    // --- FUNCIÓN REEMPLAZADA ---
     @JavascriptInterface
     fun requestRewardedAdForTask(rewardAmount: Int) {
         Log.d("AppInterface", "requestRewardedAdForTask() called with reward: $rewardAmount")
@@ -385,6 +249,7 @@ class WebAppInterface(
         }
     }
 
+    // --- FUNCIÓN REEMPLAZADA ---
     @JavascriptInterface
     fun requestRewardedAdForSpins(spinsAmount: Int) {
         Log.d("AppInterface", "requestRewardedAdForSpins() called with amount: $spinsAmount")
@@ -595,7 +460,7 @@ class WebAppInterface(
         Log.d("AppInterface", "Cleaning up WebAppInterface")
 
         try {
-            destroyAllAdMobBanners()
+            // La llamada a destroyAllAdMobBanners() ha sido eliminada.
 
             currentUserData?.let {
                 usersRef.child(it.playerId).removeEventListener(usersListener ?: return@let)

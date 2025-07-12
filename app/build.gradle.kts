@@ -67,11 +67,11 @@ android {
         }
     }
 
-    // ✅ RESOLUCIÓN DE CONFLICTOS DE DEPENDENCIAS MEJORADA
+    // ✅ RESOLUCIÓN DE CONFLICTOS DE DEPENDENCIAS CORREGIDA
     configurations.all {
         resolutionStrategy {
-            // Forzar versiones específicas para evitar conflictos
-            force("com.google.android.gms:play-services-ads:22.6.0") // Actualizado a la versión solicitada
+            // Usar versiones que realmente existen
+            force("com.google.android.gms:play-services-ads:22.6.0")
             force("com.google.android.gms:play-services-ads-lite:22.6.0")
             force("com.google.android.gms:play-services-measurement-api:22.0.2")
             force("com.google.android.gms:play-services-measurement:22.0.2")
@@ -97,12 +97,18 @@ android {
 }
 
 dependencies {
-    // ✅ DEPENDENCIAS ACTUALIZADAS SEGÚN TU SOLICITUD
+    // ✅ DEPENDENCIAS CORREGIDAS CON VERSIONES COMPATIBLES
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    // Google Ads con versiones que existen
     implementation("com.google.android.gms:play-services-ads:22.6.0")
+
+    // NO INCLUIR manualmente measurement - se resuelve automáticamente
+    // implementation("com.google.android.gms:play-services-ads-lite:22.6.0")
+    // implementation("com.google.android.gms:play-services-measurement-api:22.6.0")
 
     // --- Otras dependencias existentes ---
     implementation("androidx.activity:activity-ktx:1.9.0")
@@ -116,9 +122,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
 
     implementation("com.google.code.gson:gson:2.10.1")
-
-    // Agregar explícitamente la versión correcta
-    implementation("com.google.android.gms:play-services-measurement-api:22.0.2")
 
     // User Messaging Platform para consentimiento
     implementation("com.google.android.ump:user-messaging-platform:2.2.0")

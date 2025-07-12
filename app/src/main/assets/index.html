@@ -334,44 +334,9 @@
             max-width: 450px;
         }
 
-        /* ESTILOS PARA BANNERS ADMOB - VERSIÓN PROFESIONAL SIN MENSAJES */
-        .admob-banner-container {
-            width: 100%;
-            max-width: 450px;
-            min-height: 50px;
-            display: none; /* ← OCULTO POR DEFECTO */
-            align-items: center;
-            justify-content: center;
-            margin: 8px 0;
-            background: transparent; /* ← SIN FONDO VISIBLE */
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        /* Solo mostrar cuando el banner se carga exitosamente */
-        .admob-banner-container.loaded {
-            display: flex !important;
-            animation: fadeInUp 0.4s ease-out;
-        }
-
-        /* Animación suave para cuando aparece el banner */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Asegurarse de que no hay contenido de texto visible mientras carga */
-        .admob-banner-container::before,
-        .admob-banner-container::after {
-            display: none !important;
-            content: none !important;
-        }
+        /* === INICIO CAMBIO: CSS de banners eliminado === */
+        /* Estilos de .admob-banner-container y relacionados han sido eliminados. */
+        /* === FIN CAMBIO === */
 
         /* Estilos específicos para la sección de Política de Privacidad y Términos */
         #privacy-policy, #terms-and-conditions {
@@ -753,14 +718,13 @@
             -moz-appearance: textfield !important;
         }
 
-        /* === CORRECCIÓN APLICADA AQUÍ === */
         .swal2-input[type=number]::-webkit-outer-spin-button,
         .swal2-input[type=number]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* ICONOS ESTÁTICOS - ELIMINAMOS COMPLETAMENTE TODOS LOS ICONOS ANIMADOS */
+        /* ICONOS ESTÁTICOS */
         .swal2-icon {
             width: 80px !important;
             height: 80px !important;
@@ -772,13 +736,11 @@
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            /* Eliminar TODAS las animaciones */
             animation: none !important;
             transform: none !important;
             font-size: 60px !important;
         }
 
-        /* OCULTAR COMPLETAMENTE TODOS LOS ELEMENTOS ANIMADOS DE SWEETALERT2 */
         .swal2-icon *,
         .swal2-icon .swal2-icon-content,
         .swal2-icon .swal2-success-circular-line-left,
@@ -796,7 +758,6 @@
             opacity: 0 !important;
         }
 
-        /* REEMPLAZAR CON ICONOS EMOJI QUE SÍ FUNCIONAN */
         .swal2-icon::before {
             display: none !important;
         }
@@ -815,27 +776,12 @@
         }
 
         /* ICONOS PERSONALIZADOS CON EMOJI */
-        .swal2-icon.swal2-success::after {
-            content: '✅' !important;
-        }
+        .swal2-icon.swal2-success::after { content: '✅' !important; }
+        .swal2-icon.swal2-error::after { content: '❌' !important; }
+        .swal2-icon.swal2-warning::after { content: '⚠️' !important; }
+        .swal2-icon.swal2-info::after { content: 'ℹ️' !important; }
+        .swal2-icon.swal2-question::after { content: '❓' !important; }
 
-        .swal2-icon.swal2-error::after {
-            content: '❌' !important;
-        }
-
-        .swal2-icon.swal2-warning::after {
-            content: '⚠️' !important;
-        }
-
-        .swal2-icon.swal2-info::after {
-            content: 'ℹ️' !important;
-        }
-
-        .swal2-icon.swal2-question::after {
-            content: '❓' !important;
-        }
-
-        /* Loading personalizado - sin animaciones molestas */
         .swal2-loading .swal2-icon {
             background: none !important;
             filter: none !important;
@@ -862,7 +808,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Overlay personalizado */
         .swal2-container {
             background-color: rgba(0, 0, 0, 0.8) !important;
             backdrop-filter: blur(3px) !important;
@@ -875,26 +820,15 @@
                 margin: 20px !important;
                 padding: 1.2em !important;
             }
-
-            .swal2-title {
-                font-size: var(--text-lg) !important;
-            }
-
+            .swal2-title { font-size: var(--text-lg) !important; }
             .swal2-icon {
                 width: 60px !important;
                 height: 60px !important;
                 margin: 15px auto 10px !important;
                 font-size: 45px !important;
             }
-
-            .swal2-icon::after {
-                font-size: 45px !important;
-            }
-
-            .swal2-loading .swal2-icon::after {
-                font-size: 30px !important;
-            }
-
+            .swal2-icon::after { font-size: 45px !important; }
+            .swal2-loading .swal2-icon::after { font-size: 30px !important; }
             .swal2-confirm,
             .swal2-cancel {
                 padding: 10px 20px !important;
@@ -903,64 +837,44 @@
         }
 
         @media (max-width: 480px) {
-            .header {
-                padding: 0 15px;
-            }
-
+            .header { padding: 0 15px; }
             .hamburger-menu {
                 right: 15px !important;
                 font-size: 26px !important;
                 width: 40px !important;
                 height: 40px !important;
             }
-
             .nav-menu {
                 width: calc(100vw - 40px);
                 max-width: 280px;
                 left: -280px;
             }
             .nav-menu.active { left: 0; }
-
-            .container {
-                padding: 10px;
-            }
-
+            .container { padding: 10px; }
             .content {
                 padding: 6px 8px;
                 gap: 6px;
             }
-
             .grid-container {
                 max-width: 250px;
                 gap: 4px;
                 margin: 8px auto;
             }
-
             .spins-count {
                 font-size: var(--text-sm);
                 padding: 3px 8px;
                 min-width: 50px;
             }
-
-            .spins-section {
-                padding: 6px;
-            }
+            .spins-section { padding: 6px; }
         }
 
         @media (min-width: 481px) and (max-width: 768px) {
-            .hamburger-menu {
-                right: 18px !important;
-            }
+            .hamburger-menu { right: 18px !important; }
         }
 
         @media (min-width: 769px) {
-            .nav-menu {
-                width: 280px;
-            }
-
-            .hamburger-menu {
-                right: 25px !important;
-            }
+            .nav-menu { width: 280px; }
+            .hamburger-menu { right: 25px !important; }
         }
     </style>
 </head>
@@ -1036,10 +950,6 @@
             </p>
         </div>
 
-        <div class="admob-banner-container">
-            <div id="admob-banner-1"></div>
-        </div>
-
         <div id="myProgress" class="container">
             <p><span>ID de Jugador:</span> <span id="myPlayerId" class="editable-field">Toca para configurar ✏️</span></p>
             <hr style="border-color: #374151; margin: 6px 0;">
@@ -1072,10 +982,6 @@
             </button>
         </div>
 
-        <div class="admob-banner-container">
-            <div id="admob-banner-2"></div>
-        </div>
-
         <div id="mini-leaderboard" class="container" style="background-color: var(--container-bg);">
             <h2 style="font-size: var(--text-base); color: var(--green-accent);">Top 5 de la Semana</h2>
             <div id="mini-leaderboard-list"><p>Cargando clasificación...</p></div>
@@ -1085,10 +991,6 @@
     </section>
 
     <section id="tasks" class="section">
-        <div class="admob-banner-container">
-            <div id="admob-banner-3"></div>
-        </div>
-
         <div class="container">
             <h2 style="color: var(--purple-accent);">Completa Tareas</h2>
             <p>Gana tickets extra para tener más oportunidades.</p>
@@ -1105,10 +1007,6 @@
     </section>
 
     <section id="leaderboard" class="section">
-        <div class="admob-banner-container">
-            <div id="admob-banner-4"></div>
-        </div>
-
         <div class="container">
             <h2 class="leaderboard-title">🏆 Clasificación Semanal Completa</h2>
             <p>La tabla se actualiza en tiempo real. ¡Consigue más pases para ser el número 1!</p>
@@ -1120,10 +1018,6 @@
     </section>
 
     <section id="winners" class="section">
-        <div class="admob-banner-container">
-            <div id="admob-banner-5"></div>
-        </div>
-
         <div class="container">
             <h2 class="winners">🏆 Muro de la Fama 🏆</h2>
             <p>Aquí se mostrarán los 10 ganadores más recientes.</p>
@@ -1136,7 +1030,6 @@
             <h2>Política de Privacidad</h2>
             <div id="privacy-policy-content">
                 <p>Esta Política de Privacidad describe cómo "Diamantes Pro Players" (en adelante, "la Aplicación", "Nosotros" o "El Desarrollador") recopila, usa y comparte su información personal en relación con su uso de nuestra aplicación móvil. Al usar la Aplicación, usted acepta la recopilación y el uso de información de acuerdo con esta política.</p>
-
                 <h3>Descargo de Responsabilidad y Aviso de No Afiliación</h3>
                 <p>
                     "Diamantes Pro Players" es una aplicación de recompensas y sorteos desarrollada de forma independiente por <strong>El Desarrollador de Diamantes Pro Players</strong>.
@@ -1146,7 +1039,6 @@
                 <p>
                     Los premios ofrecidos en esta Aplicación (como Diamantes o Pases Élite de Free Fire) se adquieren directamente por "El Desarrollador" a través de tiendas en línea oficiales o autorizadas (como Pagostore) y se envían a los ID de jugador de los ganadores. La Aplicación actúa como un medio para organizar sorteos y distribuir estos premios, sin relación directa con la operación o el mantenimiento del juego Free Fire por parte de Garena.
                 </p>
-
                 <h3>1. Información que Recopilamos</h3>
                 <p>Recopilamos dos tipos principales de información a través de la Aplicación:</p>
                 <ul>
@@ -1161,7 +1053,6 @@
                         </ul>
                     </li>
                 </ul>
-
                 <h3>2. Cómo Usamos Su Información</h3>
                 <p>Utilizamos la información recopilada para varios propósitos, incluyendo:</p>
                 <ul>
@@ -1172,7 +1063,6 @@
                     <li>Para mostrar anuncios personalizados y no personalizados a través de nuestro servicio de publicidad.</li>
                     <li>Para cumplir con nuestras obligaciones legales y resolver cualquier disputa.</li>
                 </ul>
-
                 <h3>3. Compartiendo Su Información</h3>
                 <p>Compartimos su información personal en las siguientes situaciones:</p>
                 <ul>
@@ -1185,23 +1075,17 @@
                     <li><strong>En Clasificaciones y Listas de Ganadores:</strong> Su ID de jugador (parcialmente enmascarada para proteger su privacidad, por ejemplo, "123**45") puede ser visible públicamente en las clasificaciones de la Aplicación y en la lista de ganadores, para reconocer a los participantes y a los premiados.</li>
                     <li><strong>Por Obligación Legal:</strong> Podemos divulgar su información si así lo exige la ley o en respuesta a solicitudes válidas de autoridades públicas.</li>
                 </ul>
-
                 <h3>4. Seguridad de los Datos</h3>
                 <p>Nos esforzamos por proteger su información personal, pero ninguna transmisión por Internet o método de almacenamiento electrónico es 100% seguro. Si bien utilizamos medios comercialmente aceptables para proteger su información personal, no podemos garantizar su seguridad absoluta.</p>
-
                 <h3>5. Retención de Datos</h3>
                 <p>Retendremos su información personal solo durante el tiempo necesario para los fines establecidos en esta Política de Privacidad. Retendremos y utilizaremos su información en la medida necesaria para cumplir con nuestras obligaciones legales, resolver disputas y hacer cumplir nuestros acuerdos.</p>
-
                 <h3>6. Privacidad de los Niños</h3>
                 <p>Nuestra Aplicación no está dirigida a niños menores de 13 años. No recopilamos a sabiendas información de identificación personal de niños menores de 13 años. Si usted es padre o tutor y sabe que su hijo nos ha proporcionado datos personales, comuníquese con nosotros. Si descubrimos que un niño menor de 13 años nos ha proporcionado información personal, eliminaremos dicha información de nuestros servidores.</p>
                 <p><strong>Nota importante para los padres/tutores:</strong> Dado que nuestra aplicación está relacionada con un juego popular entre diversas edades, se recomienda la supervisión parental si la aplicación es utilizada por menores.</p>
-
                 <h3>7. Sus Derechos</h3>
                 <p>Dependiendo de su ubicación, usted puede tener ciertos derechos sobre su información personal, como el derecho a acceder, corregir o eliminar los datos que tenemos sobre usted. Si desea ejercer alguno de estos derechos, por favor, póngase en contacto con nosotros.</p>
-
                 <h3>8. Cambios en Esta Política de Privacidad</h3>
                 <p>Podemos actualizar nuestra Política de Privacidad de vez en cuando. Le notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página. Se le aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio. Los cambios en esta Política de Privacidad son efectivos cuando se publican en esta página.</p>
-
                 <h3>9. Contáctenos</h3>
                 <p>Si tiene alguna pregunta o sugerencia sobre nuestra Política de Privacidad, no dude en contactarnos a:</p>
                 <p><strong>Correo electrónico:</strong> follgramerpay@gmail.com</p>
@@ -1215,28 +1099,20 @@
             <h2>Términos y Condiciones</h2>
             <div id="terms-and-conditions-content">
                 <h3>Aceptación de los Términos</h3>
-                <p>
-                    Al acceder y utilizar la aplicación móvil "Diamantes Pro Players" (en adelante, "la Aplicación"), usted acepta estar obligado por estos Términos y Condiciones de Uso (en adelante, "Términos"). Si no está de acuerdo con alguna parte de estos Términos, no debe utilizar la Aplicación. Estos Términos constituyen un acuerdo legal vinculante entre usted y El Desarrollador de Diamantes Pro Players (en adelante, "El Desarrollador").
-                </p>
-
+                <p>Al acceder y utilizar la aplicación móvil "Diamantes Pro Players" (en adelante, "la Aplicación"), usted acepta estar obligado por estos Términos y Condiciones de Uso (en adelante, "Términos"). Si no está de acuerdo con alguna parte de estos Términos, no debe utilizar la Aplicación. Estos Términos constituyen un acuerdo legal vinculante entre usted y El Desarrollador de Diamantes Pro Players (en adelante, "El Desarrollador").</p>
                 <h3>Descripción del Servicio</h3>
-                <p>
-                    La Aplicación "Diamantes Pro Players" ofrece un sistema de recompensas y sorteos donde los usuarios pueden ganar "Tickets" mediante la interacción con una ruleta y la realización de ciertas "Tareas" (incluyendo la visualización opcional de anuncios). Estos Tickets pueden ser convertidos en "Pases de Sorteo", los cuales otorgan al usuario la oportunidad de participar en sorteos semanales para ganar premios relacionados con el juego Free Fire, como Diamantes y Pases Élite.
-                </p>
-
+                <p>La Aplicación "Diamantes Pro Players" ofrece un sistema de recompensas y sorteos donde los usuarios pueden ganar "Tickets" mediante la interacción con una ruleta y la realización de ciertas "Tareas" (incluyendo la visualización opcional de anuncios). Estos Tickets pueden ser convertidos en "Pases de Sorteo", los cuales otorgan al usuario la oportunidad de participar en sorteos semanales para ganar premios relacionados con el juego Free Fire, como Diamantes y Pases Élite.</p>
                 <h3>Registro de Cuenta y ID de Jugador</h3>
                 <ul>
                     <li>Para participar en los sorteos y acumular recompensas, se le pedirá que proporcione su ID numérico de jugador de Free Fire. Usted es responsable de la exactitud de esta ID. El Desarrollador no se hace responsable de la pérdida de premios debido a un ID de jugador incorrecto o inválido proporcionado por el usuario.</li>
                     <li>Usted acepta que su ID de jugador (parcialmente enmascarada, por ejemplo, "123**45") puede aparecer públicamente en las tablas de clasificación y listas de ganadores dentro de la Aplicación.</li>
                 </ul>
-
                 <h3>Reglas de Uso y Conducta</h3>
                 <ul>
                     <li>La Aplicación está destinada únicamente para uso personal y no comercial.</li>
                     <li>Queda estrictamente prohibido el uso de bots, scripts, emuladores con software de terceros, o cualquier método fraudulento o automatizado para acumular Tickets o Pases. Cualquier cuenta que se descubra utilizando dichos métodos será descalificada de los sorteos y sus Tickets y Pases podrán ser anulados sin previo aviso.</li>
                     <li>No debe intentar interferir con el funcionamiento de la Aplicación, ni intentar acceder a áreas o datos no autorizados.</li>
                 </ul>
-
                 <h3>Premios y Recompensas</h3>
                 <ul>
                     <li>Los "Tickets" y "Pases de Sorteo" son monedas virtuales exclusivas de la Aplicación y no tienen ningún valor monetario real fuera de ella. No son transferibles ni canjeables por dinero en efectivo.</li>
@@ -1244,44 +1120,24 @@
                     <li>La disponibilidad y la naturaleza de los premios, así como las reglas de los sorteos y la conversión de Tickets a Pases, pueden ser modificadas por El Desarrollador en cualquier momento sin previo aviso. Se hará lo posible por informar a los usuarios sobre cambios significativos.</li>
                     <li>La participación en los sorteos no garantiza la obtención de un premio. Los ganadores se seleccionan al azar entre los participantes elegibles.</li>
                 </ul>
-
                 <h3>Publicidad y Contenido de Terceros</h3>
                 <ul>
                     <li>La Aplicación puede mostrar anuncios proporcionados por Google AdMob. La visualización de anuncios es completamente opcional y solo se muestra con el consentimiento explícito del usuario.</li>
                     <li>Los usuarios pueden optar por ver anuncios a cambio de recompensas adicionales (Tickets). Esta es una actividad completamente voluntaria.</li>
                     <li>El Desarrollador no se hace responsable por el contenido de los anuncios ni por las interacciones que usted pueda tener con ellos o con sitios web de terceros a los que pueda acceder a través de los anuncios.</li>
                 </ul>
-
                 <h3>Propiedad Intelectual</h3>
-                <p>
-                    Todo el contenido, características y funcionalidades de la Aplicación (incluyendo, entre otros, texto, gráficos, logotipos, iconos, imágenes, compilaciones de datos y software) son propiedad de El Desarrollador o de sus licenciantes y están protegidos por leyes de derechos de autor, marcas comerciales y otras leyes de propiedad intelectual.
-                </p>
-
+                <p>Todo el contenido, características y funcionalidades de la Aplicación (incluyendo, entre otros, texto, gráficos, logotipos, iconos, imágenes, compilaciones de datos y software) son propiedad de El Desarrollador o de sus licenciantes y están protegidos por leyes de derechos de autor, marcas comerciales y otras leyes de propiedad intelectual.</p>
                 <h3>Descargo de Responsabilidad</h3>
-                <p>
-                    LA APLICACIÓN SE PROPORCIONA "TAL CUAL" Y "SEGÚN DISPONIBILIDAD", SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS. EL DESARROLLADOR NO GARANTIZA QUE LA APLICACIÓN FUNCIONE DE FORMA ININTERRUMPIDA O LIBRE DE ERRORES, QUE LOS DEFECTOS SERÁN CORREGIDOS, O QUE LA APLICACIÓN ESTÉ LIBRE DE VIRUS U OTROS COMPONENTES DAÑINOS. USTED UTILIZA LA APLICACIÓN BAJO SU PROPIO RIESGO.
-                </p>
-
+                <p>LA APLICACIÓN SE PROPORCIONA "TAL CUAL" Y "SEGÚN DISPONIBILIDAD", SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS. EL DESARROLLADOR NO GARANTIZA QUE LA APLICACIÓN FUNCIONE DE FORMA ININTERRUMPIDA O LIBRE DE ERRORES, QUE LOS DEFECTOS SERÁN CORREGIDOS, O QUE LA APLICACIÓN ESTÉ LIBRE DE VIRUS U OTROS COMPONENTES DAÑINOS. USTED UTILIZA LA APLICACIÓN BAJO SU PROPIO RIESGO.</p>
                 <h3>Limitación de Responsabilidad</h3>
-                <p>
-                    EN NINGÚN CASO EL DESARROLLADOR SERÁ RESPONSABLE POR DAÑOS INDIRECTOS, INCIDENTALES, ESPECIALES, CONSECUENTES O PUNITIVOS, INCLUYENDO, ENTRE OTROS, PÉRDIDA DE GANANCIAS, DATOS, USO O FONDO DE COMERCIO, RESULTANTES DE (I) SU ACCESO O USO O IMPOSIBILIDAD DE ACCESO O USO DE LA APLICACIÓN; (II) CUALQUIER CONDUCTA O CONTENIDO DE TERCEROS EN LA APLICACIÓN; (III) CUALQUIER CONTENIDO OBTENIDO DE LA APLICACIÓN; Y (IV) EL ACCESO, USO O ALTERACIÓN NO AUTORIZADOS DE SUS TRANSMISIONES O CONTENIDO, YA SEA BASADO EN GARANTÍA, CONTRATO, AGRAVIO (INCLUIDA LA NEGLIGENCIA) O CUALQUIER OTRA TEORÍA LEGAL, HAYAMOS SIDO O NO INFORMADOS DE LA POSIBILIDAD DE DICHOS DAÑOS.
-                </p>
-
+                <p>EN NINGÚN CASO EL DESARROLLADOR SERÁ RESPONSABLE POR DAÑOS INDIRECTOS, INCIDENTALES, ESPECIALES, CONSECUENTES O PUNITIVOS, INCLUYENDO, ENTRE OTROS, PÉRDIDA DE GANANCIAS, DATOS, USO O FONDO DE COMERCIO, RESULTANTES DE (I) SU ACCESO O USO O IMPOSIBILIDAD DE ACCESO O USO DE LA APLICACIÓN; (II) CUALQUIER CONDUCTA O CONTENIDO DE ТERCEROS EN LA APLICACIÓN; (III) CUALQUIER CONTENIDO OBTENIDO DE LA APLICACIÓN; Y (IV) EL ACCESO, USO O ALTERACIÓN NO AUTORIZADOS DE SUS TRANSMISIONES O CONTENIDO, YA SEA BASADO EN GARANTÍA, CONTRATO, AGRAVIO (INCLUIDA LA NEGLIGENCIA) O CUALQUIER OTRA TEORÍA LEGAL, HAYAMOS SIDO O NO INFORMADOS DE LA POSIBILIDAD DE DICHOS DAÑOS.</p>
                 <h3>Modificaciones de los Términos</h3>
-                <p>
-                    El Desarrollador se reserva el derecho, a su entera discreción, de modificar o reemplazar estos Términos en cualquier momento. Si una revisión es material, intentaremos proporcionar un aviso con al menos 30 días de anticipación antes de que los nuevos términos entren en vigencia. Lo que constituye un cambio material se determinará a nuestra entera discreción.
-                </p>
-
+                <p>El Desarrollador se reserva el derecho, a su entera discreción, de modificar o reemplazar estos Términos en cualquier momento. Si una revisión es material, intentaremos proporcionar un aviso con al menos 30 días de anticipación antes de que los nuevos términos entren en vigencia. Lo que constituye un cambio material se determinará a nuestra entera discreción.</p>
                 <h3>Terminación</h3>
-                <p>
-                    Podemos terminar o suspender su acceso a la Aplicación inmediatamente, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo, sin limitación, si usted incumple estos Términos.
-                </p>
-
+                <p>Podemos terminar o suspender su acceso a la Aplicación inmediatamente, sin previo aviso ni responsabilidad, por cualquier motivo, incluyendo, sin limitación, si usted incumple estos Términos.</p>
                 <h3>Ley Aplicable y Jurisdicción</h3>
-                <p>
-                    Estos Términos se regirán e interpretarán de acuerdo con las leyes de Bolivia, sin tener en cuenta sus disposiciones sobre conflicto de leyes.
-                </p>
-
+                <p>Estos Términos se regirán e interpretarán de acuerdo con las leyes de Bolivia, sin tener en cuenta sus disposiciones sobre conflicto de leyes.</p>
                 <h3>Contáctenos</h3>
                 <p>Si tiene alguna pregunta sobre estos Términos y Condiciones, puede contactarnos:</p>
                 <ul>
@@ -1309,31 +1165,23 @@
     ];
 
     const PROBABILITY_TABLE = [
-        { value: 0, label: "nada", weight: 25 },
-        { value: 1, label: "ticket", weight: 20 },
-        { value: 5, label: "tickets", weight: 18 },
-        { value: 10, label: "tickets", weight: 12 },
-        { value: 15, label: "tickets", weight: 10 },
-        { value: 20, label: "tickets", weight: 7 },
-        { value: 25, label: "tickets", weight: 5 },
-        { value: 50, label: "tickets", weight: 13 },
+        { value: 0, label: "nada", weight: 25 }, { value: 1, label: "ticket", weight: 20 },
+        { value: 5, label: "tickets", weight: 18 }, { value: 10, label: "tickets", weight: 12 },
+        { value: 15, label: "tickets", weight: 10 }, { value: 20, label: "tickets", weight: 7 },
+        { value: 25, label: "tickets", weight: 5 }, { value: 50, label: "tickets", weight: 13 },
         { value: 100, label: "tickets", weight: 8 }
     ];
 
     const selectRandomPrize = () => {
         const totalWeight = PROBABILITY_TABLE.reduce((sum, item) => sum + item.weight, 0);
         let random = Math.random() * totalWeight;
-
         for (let item of PROBABILITY_TABLE) {
             random -= item.weight;
-            if (random <= 0) {
-                return item;
-            }
+            if (random <= 0) { return item; }
         }
         return PROBABILITY_TABLE[0];
     };
 
-    // Función para mezclar array (algoritmo Fisher-Yates)
     const shuffleArray = (array) => {
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1365,6 +1213,7 @@
         overlay.classList.toggle('active');
     };
 
+    // === INICIO CAMBIO: Función showSection actualizada ===
     const showSection = (sectionId) => {
         if (sectionId !== 'home' && window.Android && window.Android.showInterstitialBeforeSection) {
             window.Android.showInterstitialBeforeSection(sectionId);
@@ -1375,7 +1224,11 @@
         navLinks.forEach(l => l.classList.remove('active'));
         document.querySelector(`.nav-link[data-section="${sectionId}"]`).classList.add('active');
         if (navMenu.classList.contains('active')) toggleMenu();
+
+        // YA NO notificamos cambios de sección para banners
+        console.log(`Sección cambiada a: ${sectionId}`);
     };
+    // === FIN CAMBIO ===
 
     // **********************************************
     // FUNCIONES LLAMADAS DESDE KOTLIN (ANDROID)
@@ -1405,14 +1258,11 @@
         console.log("JS: updateLeaderboard called.");
         const users = JSON.parse(usersJson);
         if (!leaderboardBody) return;
-
         const rankedUsers = users.filter(user => (user.passes || 0) > 0 || (user.tickets || 0) > 0);
-
         if (rankedUsers.length === 0) {
             leaderboardBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">¡Sé el primero en la clasificación!</td></tr>';
             return;
         }
-
         leaderboardBody.innerHTML = '';
         const currentPlayerId = (window.Android && window.Android.getPlayerId()) || '';
         rankedUsers.slice(0, 50).forEach((user, index) => {
@@ -1429,29 +1279,23 @@
         if (!miniList || !myRankStatus) return;
 
         const rankedUsers = users.filter(user => (user.passes || 0) > 0 || (user.tickets || 0) > 0);
-
         miniList.innerHTML = rankedUsers.length ? '' : '<p>Aún no hay participantes con pases.</p>';
         rankedUsers.slice(0, 5).forEach((user, index) => {
             const item = document.createElement('div');
             item.className = 'mini-leaderboard-item';
-
             const currentPlayerId = (window.Android && window.Android.getPlayerId()) || '';
             if (currentPlayerId && user.playerId === currentPlayerId) {
                 item.classList.add('my-rank-highlight');
             }
-
             item.innerHTML = `<span class="rank">#${index + 1}</span><span class="player-id">${maskPlayerId(user.playerId, true)}</span><span class="passes">${(user.passes || 0).toLocaleString()} Pases</span>`;
             miniList.appendChild(item);
         });
 
-        // Actualizar estado del usuario actual
         if (window.Android && window.Android.getPlayerId() && window.Android.getPlayerId() !== "Toca para configurar ✏️" && window.Android.getPlayerId() !== "null") {
             const currentPlayerId = window.Android.getPlayerId();
             const currentUserTickets = parseInt(document.getElementById('myTickets').textContent.replace(/,/g, '')) || 0;
             const currentUserPasses = parseInt(document.getElementById('myPasses').textContent.replace(/,/g, '')) || 0;
-
             const myRankIndex = rankedUsers.findIndex(u => u.playerId === currentPlayerId);
-
             if (myRankIndex !== -1) {
                 myRankStatus.innerHTML = `<span class="rank">#${myRankIndex + 1}</span><span class="player-id">Tú</span><span class="passes">${currentUserPasses.toLocaleString()} Pases</span>`;
                 myRankStatus.classList.add('my-rank-highlight');
@@ -1474,18 +1318,14 @@
         const winners = JSON.parse(winnersJson);
         const winnersList = document.getElementById('winners-list');
         if (!winnersList) return;
-
         winnersList.innerHTML = '';
         if (winners.length > 0) {
-            winners.slice(0, 10).forEach((winner, index) => {
+            winners.slice(0, 10).forEach((winner) => {
                 const card = document.createElement('div');
                 card.className = 'winner-card';
                 const formattedDate = winner.date || new Date(winner.timestamp).toLocaleDateString('es-ES', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    year: 'numeric', month: 'long', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
                 });
                 card.innerHTML = `
                     <p class="date">Sorteo del ${formattedDate}</p>
@@ -1493,16 +1333,6 @@
                     <p class="winner-id">Ganador ID: ${maskPlayerId(winner.winnerId, false)}</p>
                 `;
                 winnersList.appendChild(card);
-
-                if (index < winners.length - 1) {
-                    const bannerContainer = document.createElement('div');
-                    bannerContainer.className = 'admob-banner-container';
-                    const bannerId = `admob-winner-banner-${index}`;
-                    bannerContainer.innerHTML = `<div id="${bannerId}"></div>`;
-                    winnersList.appendChild(bannerContainer);
-
-                    createAdMobBannerSilently(bannerId);
-                }
             });
         } else {
             winnersList.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 20px;">Aún no hay ganadores. ¡Podrías ser el primero!</p>';
@@ -1513,40 +1343,9 @@
     // FUNCIONES DE JAVASCRIPT DE LA APP
     // **********************************************
 
-    function createAdMobBannerSilently(containerId, timeoutMs = 6000) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const bannerContainer = container.closest('.admob-banner-container');
-        if (!bannerContainer) return;
-
-        bannerContainer.style.display = 'none';
-
-        const timeout = setTimeout(() => {
-            console.log(`Banner ${containerId} timeout - keeping hidden`);
-            bannerContainer.style.display = 'none';
-        }, timeoutMs);
-
-        window[`onBannerLoaded_${containerId}`] = () => {
-            clearTimeout(timeout);
-            bannerContainer.style.display = 'flex';
-            bannerContainer.classList.add('loaded');
-            console.log(`Banner ${containerId} loaded successfully and shown`);
-        };
-
-        window[`onBannerFailed_${containerId}`] = () => {
-            clearTimeout(timeout);
-            bannerContainer.style.display = 'none';
-            bannerContainer.classList.remove('loaded');
-            console.log(`Banner ${containerId} failed - keeping hidden`);
-        };
-
-        if (window.Android && window.Android.createAdMobBanner) {
-            window.Android.createAdMobBanner(containerId);
-        } else {
-            setTimeout(() => window[`onBannerFailed_${containerId}`](), 100);
-        }
-    }
+    // === INICIO CAMBIO: Funciones de banner eliminadas ===
+    // La función `createAdMobBannerSilently` ha sido eliminada.
+    // === FIN CAMBIO ===
 
     const updateSpinCountUI = () => {
         spinsAvailableEl.textContent = currentSpins.toLocaleString();
@@ -1584,19 +1383,11 @@
     const showPlayerIdPrompt = () => {
         const currentId = window.Android && window.Android.getPlayerId ? window.Android.getPlayerId() : "";
         const displayCurrentId = (currentId && currentId !== "null" && currentId !== "Toca para configurar ✏️") ? currentId : "";
-
         Swal.fire({
             title: displayCurrentId ? 'Cambiar ID de Jugador' : 'Configura tu ID de Jugador',
             icon: displayCurrentId ? 'question' : 'info',
-            html: `
-                <p style="margin-bottom: 15px;">Para participar en sorteos y ganar premios, debes configurar tu ID de Free Fire.</p>
-                ${displayCurrentId ? '' : `
-                    <div style="background: var(--container-bg); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: var(--text-sm); color: var(--text-muted);">
-                        Al ingresar tu ID y confirmar, aceptas nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Política de Privacidad</a> y
-                        nuestros <a href="#terms-and-conditions" onclick="window.showSection('terms-and-conditions'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Términos y Condiciones</a>.
-                    </div>
-                `}
-            `,
+            html: `<p style="margin-bottom: 15px;">Para participar en sorteos y ganar premios, debes configurar tu ID de Free Fire.</p>` +
+                (!displayCurrentId ? `<div style="background: var(--container-bg); padding: 10px; border-radius: 8px; margin-top: 10px; font-size: var(--text-sm); color: var(--text-muted);">Al ingresar tu ID y confirmar, aceptas nuestra <a href="#privacy-policy" onclick="window.showSection('privacy-policy'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Política de Privacidad</a> y nuestros <a href="#terms-and-conditions" onclick="window.showSection('terms-and-conditions'); Swal.close();" style="color: var(--gold-accent); text-decoration: underline;">Términos y Condiciones</a>.</div>` : ''),
             input: 'number',
             inputPlaceholder: 'Ingresa tu ID numérico',
             inputValue: displayCurrentId,
@@ -1614,139 +1405,65 @@
         }).then((result) => {
             if (result.isConfirmed && window.Android) {
                 const newPlayerId = result.value;
-                console.log("JS: User wants to change ID to:", newPlayerId);
-
                 if (displayCurrentId && displayCurrentId !== newPlayerId) {
                     Swal.fire({
-                        title: '⚠️ Confirmar Cambio de ID',
-                        icon: 'warning',
-                        html: `
-                            <p style="margin-bottom: 15px;"><strong>¿Estás seguro de cambiar tu ID?</strong></p>
-                            <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                                <p style="margin: 5px 0;"><strong>ID Actual:</strong> <span style="color: #ff6b6b;">${displayCurrentId}</span></p>
-                                <p style="margin: 5px 0;"><strong>Nueva ID:</strong> <span style="color: #51cf66;">${newPlayerId}</span></p>
-                            </div>
-                            <p style="color: #ffd43b; font-size: var(--text-sm); margin-top: 15px;">
-                                <strong>Nota:</strong> Se cargarán automáticamente los tickets asociados a la nueva ID.
-                            </p>
-                        `,
-                        showCancelButton: true,
-                        confirmButtonText: 'Confirmar Cambio',
-                        cancelButtonText: 'Cancelar'
+                        title: '⚠️ Confirmar Cambio de ID', icon: 'warning',
+                        html: `<p style="margin-bottom: 15px;"><strong>¿Estás seguro de cambiar tu ID?</strong></p><div style="background: #2a2a2a; padding: 15px; border-radius: 8px; margin: 10px 0;"><p style="margin: 5px 0;"><strong>ID Actual:</strong> <span style="color: #ff6b6b;">${displayCurrentId}</span></p><p style="margin: 5px 0;"><strong>Nueva ID:</strong> <span style="color: #51cf66;">${newPlayerId}</span></p></div><p style="color: #ffd43b; font-size: var(--text-sm); margin-top: 15px;"><strong>Nota:</strong> Se cargarán automáticamente los tickets asociados a la nueva ID.</p>`,
+                        showCancelButton: true, confirmButtonText: 'Confirmar Cambio', cancelButtonText: 'Cancelar'
                     }).then((confirmResult) => {
                         if (confirmResult.isConfirmed) {
-                            console.log("JS: User confirmed ID change, saving:", newPlayerId);
                             window.Android.savePlayerId(newPlayerId);
-                            Swal.fire({
-                                title: '✅ ID Cambiado Exitosamente',
-                                icon: 'success',
-                                html: `
-                                    <p>Tu ID ha sido cambiado a: <strong style="color: #51cf66;">${newPlayerId}</strong></p>
-                                    <p style="color: #74c0fc; font-size: var(--text-sm); margin-top: 10px;">
-                                        Los datos se están cargando automáticamente...
-                                    </p>
-                                `,
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
+                            Swal.fire({ title: '✅ ID Cambiado Exitosamente', icon: 'success', html: `<p>Tu ID ha sido cambiado a: <strong style="color: #51cf66;">${newPlayerId}</strong></p><p style="color: #74c0fc; font-size: var(--text-sm); margin-top: 10px;">Los datos se están cargando automáticamente...</p>`, timer: 3000, showConfirmButton: false });
                         }
                     });
                 } else if (!displayCurrentId) {
-                    console.log("JS: First time setting ID:", newPlayerId);
                     window.Android.savePlayerId(newPlayerId);
-                    Swal.fire({
-                        title: '✅ ID Configurado',
-                        icon: 'success',
-                        html: `
-                            <p>Tu ID <strong style="color: #51cf66;">${newPlayerId}</strong> ha sido configurado correctamente.</p>
-                            <p style="color: #74c0fc; font-size: var(--text-sm); margin-top: 10px;">
-                                ¡Ya puedes empezar a ganar tickets!
-                            </p>
-                        `,
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
+                    Swal.fire({ title: '✅ ID Configurado', icon: 'success', html: `<p>Tu ID <strong style="color: #51cf66;">${newPlayerId}</strong> ha sido configurado correctamente.</p><p style="color: #74c0fc; font-size: var(--text-sm); margin-top: 10px;">¡Ya puedes empezar a ganar tickets!</p>`, timer: 3000, showConfirmButton: false });
                 }
             }
         });
     };
 
     const addTickets = (amount) => {
-        console.log(`JS: Attempting to add ${amount} tickets.`);
         if (window.Android && window.Android.addTickets) {
             window.Android.addTickets(amount);
         } else {
-            Swal.fire('Error', 'La funcionalidad de tickets no está disponible. ¿Estás ejecutando la app en Android?', 'error');
-            console.error("JS: Android interface or addTickets method not found.");
+            Swal.fire('Error', 'La funcionalidad de tickets no está disponible.', 'error');
         }
     };
 
     const spinGrid = () => {
-        console.log("JS: Spin button clicked!");
-        if (spinning) {
-            console.log("JS: Already spinning, ignoring click.");
-            return;
-        }
-
+        if (spinning) return;
         if (!checkPlayerId()) {
-            console.warn("JS: Player ID not set, showing modal.");
             Swal.fire({
-                title: 'ID de Jugador Requerido',
-                text: 'Necesitas configurar tu ID de jugador antes de poder girar la ruleta.',
-                icon: 'warning',
-                confirmButtonText: 'Configurar ID',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showPlayerIdPrompt();
-                }
-            });
+                title: 'ID de Jugador Requerido', text: 'Necesitas configurar tu ID de jugador antes de poder girar la ruleta.', icon: 'warning',
+                confirmButtonText: 'Configurar ID', showCancelButton: true, cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) { showPlayerIdPrompt(); } });
             return;
         }
-
         if (currentSpins <= 0) {
             Swal.fire({
-                title: '¡No tienes giros!',
-                html: '<p>Necesitas giros para jugar a la ruleta.</p><p>Puedes obtener más giros viendo un video.</p>',
-                icon: 'warning',
-                confirmButtonText: 'Ver Video para Giros',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    requestSpinsByWatchingAd();
-                }
-            });
+                title: '¡No tienes giros!', html: '<p>Necesitas giros para jugar. Puedes obtener más giros viendo un video.</p>', icon: 'warning',
+                confirmButtonText: 'Ver Video para Giros', showCancelButton: true, cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) { requestSpinsByWatchingAd(); } });
             return;
         }
-
         currentSpins--;
         updateSpinCountUI();
-
         spinning = true;
         spinButton.textContent = 'GIRANDO...';
         spinButton.disabled = true;
 
         const gridItems = document.querySelectorAll('.grid-item');
         gridItems.forEach(item => item.classList.remove('active', 'winner'));
-
         const finalWinnerIndex = Math.floor(Math.random() * gridItems.length);
-        const spinDuration = 2500;
-        const spinInterval = 120;
-        let elapsed = 0;
-        let currentActiveIndex = -1;
+        const spinDuration = 2500, spinInterval = 120;
+        let elapsed = 0, currentActiveIndex = -1;
 
         const spinAnimation = setInterval(() => {
-            if (currentActiveIndex !== -1) {
-                gridItems[currentActiveIndex].classList.remove('active');
-            }
-
+            if (currentActiveIndex !== -1) gridItems[currentActiveIndex].classList.remove('active');
             let newRandomIndex;
-            do {
-                newRandomIndex = Math.floor(Math.random() * gridItems.length);
-            } while (newRandomIndex === currentActiveIndex);
-
+            do { newRandomIndex = Math.floor(Math.random() * gridItems.length); } while (newRandomIndex === currentActiveIndex);
             gridItems[newRandomIndex].classList.add('active');
             currentActiveIndex = newRandomIndex;
             elapsed += spinInterval;
@@ -1755,30 +1472,21 @@
                 clearInterval(spinAnimation);
                 gridItems.forEach(item => item.classList.remove('active'));
                 gridItems[finalWinnerIndex].classList.add('winner');
-
                 const winnerElement = gridItems[finalWinnerIndex];
                 const winnerValue = parseInt(winnerElement.textContent);
                 const winnerLabel = winnerElement.querySelector('span').textContent;
-                const winnerData = { value: winnerValue, label: winnerLabel };
-
-                console.log("JS: Spin result:", winnerData);
-
                 setTimeout(() => {
-                    if (winnerData.value > 0) {
-                        addTickets(winnerData.value);
-                        spinButton.textContent = `+${winnerData.value} ${winnerData.label}! 🎉`;
+                    if (winnerValue > 0) {
+                        addTickets(winnerValue);
+                        spinButton.textContent = `+${winnerValue} ${winnerLabel}! 🎉`;
                         spinButton.style.background = 'var(--green-accent)';
                     } else {
                         spinButton.textContent = '¡Mejor suerte la próxima! 😅';
                     }
-
                     setTimeout(() => {
                         spinButton.textContent = '🎟️ ¡GIRAR RULETA!';
-                        if (currentSpins > 0) {
-                             spinButton.style.background = 'var(--accent-color)';
-                        }
+                        if (currentSpins > 0) { spinButton.style.background = 'var(--accent-color)'; }
                     }, 2000);
-
                     spinning = false;
                     updateSpinCountUI();
                     gridItems.forEach(item => item.classList.remove('winner'));
@@ -1790,41 +1498,16 @@
     const requestSpinsByWatchingAd = () => {
         if (!checkPlayerId()) {
             Swal.fire({
-                title: 'ID de Jugador Requerido',
-                text: 'Necesitas configurar tu ID de jugador para ganar giros.',
-                icon: 'warning',
-                confirmButtonText: 'Configurar ID',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showPlayerIdPrompt();
-                }
-            });
+                title: 'ID de Jugador Requerido', text: 'Necesitas configurar tu ID para ganar giros.', icon: 'warning',
+                confirmButtonText: 'Configurar ID', showCancelButton: true, cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) { showPlayerIdPrompt(); } });
             return;
         }
-
         Swal.fire({
             title: '📺 Ver Video para Giros',
-            html: `
-                <div style="text-align: left; margin: 15px 0;">
-                    <p style="margin-bottom: 10px;"><strong>¿Deseas ver un video publicitario para obtener giros?</strong></p>
-                    <ul style="color: var(--text-muted); font-size: var(--text-sm); margin-left: 20px;">
-                        <li>Recompensa: <strong style="color: var(--gold-accent);">+${spinsRewardedPerAd} Giros</strong></li>
-                        <li>Duración aproximada: 15-30 segundos</li>
-                        <li>Completamente opcional y voluntario</li>
-                    </ul>
-                    <p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">
-                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios.
-                    </p>
-                </div>
-            `,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: '📺 Ver Video',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#F97316',
-            cancelButtonColor: '#6c757d'
+            html: `<div style="text-align: left; margin: 15px 0;"><p style="margin-bottom: 10px;"><strong>¿Deseas ver un video publicitario para obtener giros?</strong></p><ul style="color: var(--text-muted); font-size: var(--text-sm); margin-left: 20px;"><li>Recompensa: <strong style="color: var(--gold-accent);">+${spinsRewardedPerAd} Giros</strong></li><li>Duración aproximada: 15-30 segundos</li><li>Completamente opcional</li></ul><p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad.</p></div>`,
+            icon: 'question', showCancelButton: true, confirmButtonText: '📺 Ver Video', cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#F97316', cancelButtonColor: '#6c757d'
         }).then((result) => {
             if (result.isConfirmed) {
                 if (window.Android && window.Android.requestRewardedAdForSpins) {
@@ -1833,8 +1516,7 @@
                     getSpinsButton.disabled = true;
                     getSpinsButton.style.background = '#555';
                 } else {
-                    Swal.fire('Error', 'La funcionalidad de video para giros no está disponible.', 'error');
-                    console.error("JS: Android interface or requestRewardedAdForSpins method not found.");
+                    Swal.fire('Error', 'La funcionalidad de video no está disponible.', 'error');
                     getSpinsButton.textContent = '📺 Ver Video para Giros (+10)';
                     getSpinsButton.style.background = 'var(--gold-accent)';
                     getSpinsButton.disabled = false;
@@ -1844,73 +1526,40 @@
     };
 
     const completeTask = () => {
-        console.log("JS: Task button clicked!");
-
         if (!checkPlayerId()) {
-            console.warn("JS: Player ID not set, showing modal.");
             Swal.fire({
-                title: 'ID de Jugador Requerido',
-                text: 'Necesitas configurar tu ID de jugador antes de completar tareas.',
-                icon: 'warning',
-                confirmButtonText: 'Configurar ID',
-                showCancelButton: true,
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    showPlayerIdPrompt();
-                }
-            });
+                title: 'ID de Jugador Requerido', text: 'Necesitas configurar tu ID para completar tareas.', icon: 'warning',
+                confirmButtonText: 'Configurar ID', showCancelButton: true, cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) { showPlayerIdPrompt(); } });
             return;
         }
-
         Swal.fire({
             title: '📺 Ver Video Publicitario',
-            html: `
-                <div style="text-align: left; margin: 15px 0;">
-                    <p style="margin-bottom: 10px;"><strong>¿Deseas ver un video publicitario?</strong></p>
-                    <ul style="color: var(--text-muted); font-size: var(--text-sm); margin-left: 20px;">
-                        <li>Recompensa: <strong style="color: var(--gold-accent);">+20 Tickets</strong></li>
-                        <li>Duración aproximada: 15-30 segundos</li>
-                        <li>Completamente opcional y voluntario</li>
-                    </ul>
-                    <p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">
-                        Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad de nuestros socios.
-                    </p>
-                </div>
-            `,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: '📺 Ver Video',
-            cancelButtonText: 'Cancelar',
-            confirmButtonColor: '#8B5CF6',
-            cancelButtonColor: '#6c757d'
+            html: `<div style="text-align: left; margin: 15px 0;"><p style="margin-bottom: 10px;"><strong>¿Deseas ver un video publicitario?</strong></p><ul style="color: var(--text-muted); font-size: var(--text-sm); margin-left: 20px;"><li>Recompensa: <strong style="color: var(--gold-accent);">+20 Tickets</strong></li><li>Duración aproximada: 15-30 segundos</li><li>Completamente opcional</li></ul><p style="margin-top: 15px; color: var(--accent-color); font-size: var(--text-sm); font-style: italic;">Al hacer clic en "Ver Video" das tu consentimiento para visualizar publicidad.</p></div>`,
+            icon: 'question', showCancelButton: true, confirmButtonText: '📺 Ver Video', cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#8B5CF6', cancelButtonColor: '#6c757d'
         }).then((result) => {
             if (result.isConfirmed) {
                 if (window.Android && window.Android.requestRewardedAdForTask) {
-                    const rewardAmount = 20;
-                    window.Android.requestRewardedAdForTask(rewardAmount);
+                    window.Android.requestRewardedAdForTask(20);
                     taskButton.textContent = 'Cargando video...';
                     taskButton.disabled = true;
                     taskButton.style.background = '#555';
                 } else {
-                    Swal.fire('Error', 'La funcionalidad de video no está disponible. ¿Estás ejecutando la app en Android?', 'error');
-                    console.error("JS: Android interface or requestRewardedAdForTask method not found.");
+                    Swal.fire('Error', 'La funcionalidad de video no está disponible.', 'error');
                 }
             }
         });
     };
 
     const maskPlayerId = (id, shouldMask = true) => {
-        if (!shouldMask) {
-            return id;
-        }
+        if (!shouldMask) return id;
         return id && typeof id === 'string' && id.length >= 5 ? id.substring(0, 3) + '**' + id.substring(id.length - 2) : id;
     };
 
     const startWeeklyCountdown = () => {
         const countdownEl = document.getElementById('countdown');
         if (!countdownEl) return;
-
         const getNextSunday = () => {
             const now = new Date();
             const nextSunday = new Date(now);
@@ -1918,24 +1567,17 @@
             nextSunday.setHours(23, 59, 59, 999);
             return nextSunday;
         };
-
         const updateCountdown = () => {
-            const now = new Date();
-            const target = getNextSunday();
-            const diff = target - now;
-
+            const diff = getNextSunday() - new Date();
             if (diff <= 0) {
                 countdownEl.textContent = '¡Sorteo Finalizado!';
                 return;
             }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
+            const days = Math.floor(diff / 86400000);
+            const hours = Math.floor((diff % 86400000) / 3600000);
+            const minutes = Math.floor((diff % 3600000) / 60000);
             countdownEl.textContent = `${days}d ${hours}h ${minutes}m`;
         };
-
         updateCountdown();
         setInterval(updateCountdown, 60000);
     };
@@ -1943,10 +1585,7 @@
     const initializeGrid = () => {
         if (!gridContainer) return;
         gridContainer.innerHTML = '';
-
-        const shuffledData = shuffleArray(GRID_ITEMS_DATA);
-
-        shuffledData.forEach((item) => {
+        shuffleArray(GRID_ITEMS_DATA).forEach(item => {
             const gridItem = document.createElement('div');
             gridItem.className = 'grid-item';
             gridItem.innerHTML = `${item.value}<span>${item.label}</span>`;
@@ -1954,9 +1593,9 @@
         });
     };
 
-    // Exponer showSection globalmente para los enlaces de políticas
     window.showSection = showSection;
 
+    // === INICIO CAMBIO: `DOMContentLoaded` actualizado ===
     document.addEventListener('DOMContentLoaded', () => {
         // Event Listeners para la UI
         if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMenu);
@@ -1980,34 +1619,8 @@
         if (taskButton) taskButton.addEventListener('click', completeTask);
         if (getSpinsButton) getSpinsButton.addEventListener('click', requestSpinsByWatchingAd);
 
-        // --- INICIO: LÓGICA DE CARGA SILENCIOSA DE BANNERS ---
-        const isAdMobAvailable = window.Android && window.Android.checkAdMobAvailability
-            ? window.Android.checkAdMobAvailability()
-            : (typeof window.Android !== 'undefined');
-
-        if (!isAdMobAvailable) {
-            console.log("AdMob no disponible, ocultando todos los contenedores de banners");
-            const bannerContainers = document.querySelectorAll('.admob-banner-container');
-            bannerContainers.forEach(container => {
-                container.style.display = 'none';
-            });
-        } else {
-            console.log("AdMob disponible, intentando cargar banners silenciosamente...");
-            const bannerIds = [
-                'admob-banner-1',
-                'admob-banner-2',
-                'admob-banner-3',
-                'admob-banner-4',
-                'admob-banner-5'
-            ];
-
-            bannerIds.forEach((bannerId, index) => {
-                setTimeout(() => {
-                    createAdMobBannerSilently(bannerId);
-                }, index * 500);
-            });
-        }
-        // --- FIN: LÓGICA DE CARGA SILENCIOSA DE BANNERS ---
+        // ELIMINAR COMPLETAMENTE TODA LA LÓGICA DE BANNERS - NO MÁS BANNERS DINÁMICOS
+        console.log("App iniciada sin banners dinámicos - solo banner inferior fijo");
 
         // Inicializar interfaz con datos de Android
         if (window.Android) {
@@ -2021,17 +1634,13 @@
         initializeGrid();
         updateSpinCountUI();
     });
+    // === FIN CAMBIO ===
 
-    // Configurar SweetAlert2 con estilos personalizados
     if (typeof Swal !== 'undefined') {
         window.Swal = Swal.mixin({
             customClass: {
-                popup: 'swal2-popup',
-                title: 'swal2-title',
-                htmlContainer: 'swal2-html-container',
-                confirmButton: 'swal2-confirm',
-                cancelButton: 'swal2-cancel',
-                input: 'swal2-input'
+                popup: 'swal2-popup', title: 'swal2-title', htmlContainer: 'swal2-html-container',
+                confirmButton: 'swal2-confirm', cancelButton: 'swal2-cancel', input: 'swal2-input'
             },
             buttonsStyling: false
         });
